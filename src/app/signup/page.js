@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 const Signup = () => {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -60,6 +61,15 @@ const Signup = () => {
             Sign Up
           </button>
         </form>
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-indigo-600 font-medium hover:underline"
+          >
+            Login
+          </Link>
+        </p>
         {message && (
           <p className="mt-4 text-sm text-center text-gray-600">{message}</p>
         )}
