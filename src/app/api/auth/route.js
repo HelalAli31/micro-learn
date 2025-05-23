@@ -1,6 +1,7 @@
 import dbConnect from "@/app/api/dbconnection";
 import User from "@/app/api/models/userSchema";
 
+//auth
 export async function POST(req) {
   try {
     await dbConnect();
