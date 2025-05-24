@@ -9,6 +9,8 @@ import HowItWorks from '/Components/HowItWorks'
 import AboutSection from '/Components/AboutSection'
 import Footer from '/Components/Footer'
 import TestimonialsSection from '/Components/TestimonialsSection'
+import './globals.css'; // ✅ Your styles will apply to all pages
+
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

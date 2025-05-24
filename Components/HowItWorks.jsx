@@ -1,4 +1,5 @@
 // ✅ HowItWorks.jsx
+
 export default function HowItWorks() {
   return (
     <section className="section bg-[#e6eaef] py-12 border-t border-gray-300">

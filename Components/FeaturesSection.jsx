@@ -1,4 +1,5 @@
 // ✅ FeaturesSection.jsx
+
 export default function FeaturesSection() {
   return (
     <section id="features" className="section bg-[#e6eaef] py-12">
