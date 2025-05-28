@@ -1,11 +1,14 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+// app/login/page.js
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../context/AuthContext'; // Import useAuth hook
 
 const Login = () => {
-  const [form, setForm] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
   const router = useRouter();
+  const { login } = useAuth(); // Get the login function from AuthContext
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -14,18 +17,19 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, mode: "login" }),
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, mode: 'login' }),
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      router.push("/"); // ✅ redirect to home on success
+      login(form.username); // Call login from context, passing the username
+      router.push(`/profile?username=${form.username}`); // Redirect to profile
     } else {
-      setError(data.error || "Invalid credentials");
+      setError(data.error || 'Invalid credentials');
     }
   };
 
@@ -77,7 +81,7 @@ const Login = () => {
         )}
 
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Don’t have an account?{" "}
+          Don’t have an account?{' '}
           <a
             href="/signup"
             className="text-indigo-600 font-medium hover:underline"
