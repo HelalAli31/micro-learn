@@ -9,20 +9,20 @@ export async function POST(req, { params }) {
     await dbConnect();
 
     const { field } = await params; // Await params here
-    const { username, searchQuery } = await req.json(); // 'searchQuery' will be the data to push
+    const { username, value } = await req.json(); // 'value' will be the data to push
 
-    if (!username || searchQuery === undefined || !field) { // Check for undefined searchQuery
-      console.log('Missing data:', { username, searchQuery, field });
+    if (!username || value === undefined || !field) { // Check for undefined value
+      console.log('Missing data:', { username, value, field });
       let errorMessage = 'Missing data: ';
       if (!username) errorMessage += 'username is required. ';
-      if (searchQuery === undefined) errorMessage += 'searchQuery is required in the request body. ';
+      if (value === undefined) errorMessage += 'value is required in the request body. ';
       if (!field) errorMessage += 'field name is missing from the URL. ';
 
       return NextResponse.json({ error: errorMessage.trim() }, { status: 400 });
     }
 
     // Validate the field name to prevent arbitrary updates
-    const allowedFields = ['searchHistory', 'quizHistory', 'anotherField']; // Add your fields here
+    const allowedFields = ['searchHistory', 'quizHistory', 'videoHistory']; // Add your fields here
     if (!allowedFields.includes(field)) {
       console.log('Attempted to update disallowed field:', field);
       return NextResponse.json({ error: `Invalid field name: ${field}` }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(req, { params }) {
     // Construct the update object dynamically
     const updateOperation = {
       $push: {
-        [field]: searchQuery // Use computed property name for dynamic field update
+        [field]: value // Use computed property name for dynamic field update
       }
     };
 

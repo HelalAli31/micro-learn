@@ -25,7 +25,6 @@ export async function GET(request) {
     const videos = (data.items || []).map((item) => {
       const videoId = item.id.videoId;
       const url = `https://www.youtube.com/watch?v=${videoId}`;
-      console.log(url); // 👈 Print the full YouTube link to the server console
       return {
         id: videoId,
         title: item.snippet.title,

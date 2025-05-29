@@ -77,7 +77,7 @@ export default function SearchPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: username,
-        searchQuery: searchTerm,
+        value: searchTerm,
       }),
     });
 
@@ -94,8 +94,33 @@ export default function SearchPage() {
     handleSearch();
   }
 
-  function openVideoModal(video) {
-    setSelectedVideo(video);
+  // Assuming setSelectedVideo and username are available in this scope
+// For example, if this function is inside a React component:
+// const [selectedVideo, setSelectedVideo] = useState(null);
+// const searchParams = useSearchParams();
+// const username = searchParams.get('username');
+
+async function openVideoModal(video) { // Mark the function as async
+  setSelectedVideo(video); // First, set the selected video to display the modal
+
+  // Now, perform the fetch operation
+  if (username && video) { // Add checks to ensure username and video exist
+      try {
+        await fetch('/api/add/videoHistory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username,
+            value: video.title,
+          }),
+        });
+        console.log('Video history saved successfully!');
+      } catch (error) {
+        console.error('Error saving video history:', error);
+      }
+    } else {
+      console.warn('Cannot save video history: username or video is missing.');
+    }
   }
 
   function closeVideoModal() {
