@@ -15,7 +15,7 @@ export default function SearchSection() {
         </p>
         <Link
           href={`/search?username=${safeUsername}`}
-          className="btn-outline px-4 py-2 border rounded-md text-white hover:bg-white hover:text-[#202774] transition-colors"
+          className="btn-outline px-4 py-2 border rounded-md text-white border-purple-500 bg-purple-500 hover:bg-purple-600 hover:border-purple-600 transition-colors"
         >
           Search Any Topic
         </Link>
