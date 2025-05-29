@@ -14,6 +14,7 @@ import InitialState from '../../../Components/ComponentsSearch/InitialState.jsx'
 import QuizButton from '../../../Components/ComponentsSearch/QuizButton.jsx';
 
 export default function SearchPage() {
+  
   const [query, setQuery] = useState('');
   const [videos, setVideos] = useState([]);
   // Change explanation to store an object, not just a string
@@ -22,8 +23,9 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const searchParams = useSearchParams(); // Get search parameters
+  const username = searchParams.get('username'); // Get the username from the URL
 
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
@@ -35,47 +37,57 @@ export default function SearchPage() {
   }, [searchParams]);
 
   async function handleSearch(searchQuery) {
-    const searchTerm = searchQuery || query;
-    if (!searchTerm) return;
+  const searchTerm = searchQuery || query;
+  if (!searchTerm || !username) return;
 
-    setLoading(true);
-    setHasSearched(true);
-    setExplanation(null); // Reset explanation to null/empty object
-    setQuiz([]);
+  setLoading(true);
+  setHasSearched(true);
+  setExplanation(null); // Reset explanation to null/empty object
+  setQuiz([]);
 
-    try {
-      const videosRes = await fetch(
-        `/api/videos?query=${encodeURIComponent(searchTerm)}`
-      );
-      const videosData = await videosRes.json();
+  try {
+    const videosRes = await fetch(
+      `/api/videos?query=${encodeURIComponent(searchTerm)}`
+    );
+    const videosData = await videosRes.json();
 
-      const explanationRes = await fetch(
-        `/api/explanation?query=${encodeURIComponent(searchTerm)}`
-      );
-      const explanationData = await explanationRes.json(); // explanationData will be { explanation: "...", query: "..." }
+    const explanationRes = await fetch(
+      `/api/explanation?query=${encodeURIComponent(searchTerm)}`
+    );
+    const explanationData = await explanationRes.json();
 
-      setVideos(
-        (videosData.videos || []).map((v) => ({
-          id: v.id,
-          title: v.title,
-          url: v.url,
-        }))
-      );
+    setVideos(
+      (videosData.videos || []).map((v) => ({
+        id: v.id,
+        title: v.title,
+        url: v.url,
+      }))
+    );
 
-      // Store the entire explanationData object
-      // This ensures 'explanation' state has both 'explanation' text and 'query' properties
-      setExplanation({
-        text: explanationData.explanation || '', // Assuming API returns 'explanation' field for text
-        query: explanationData.query || searchTerm, // Assuming API returns 'query' field, or use searchTerm as fallback
-      });
-      setQuiz(explanationData.quiz || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      setExplanation(null); // Clear explanation on error
-    } finally {
-      setLoading(false);
-    }
+    setExplanation({
+      text: explanationData.explanation || '',
+      query: explanationData.query || searchTerm,
+    });
+
+    setQuiz(explanationData.quiz || []);
+
+    // ✅ NEW: Save search to MongoDB
+    await fetch('/api/add/searchHistory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: username,
+        searchQuery: searchTerm,
+      }),
+    });
+
+  } catch (error) {
+    console.error('Search error:', error);
+    setExplanation(null); // Clear explanation on error
+  } finally {
+    setLoading(false);
   }
+}
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -109,10 +121,11 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SearchHeader
-        query={query}
-        setQuery={setQuery}
-        handleSubmit={handleSubmit}
-      />
+      query={query}
+      setQuery={setQuery}
+      handleSubmit={handleSubmit}
+      username={username} // ✅ pass the username prop here
+    />
 
       {loading && <LoadingState />}
 

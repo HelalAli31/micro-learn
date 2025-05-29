@@ -64,7 +64,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
             // If the user is logged in, show these links
             <>
               <Link
-                href="/search" // Link to a search page (create this page if it doesn't exist)
+                href={`/search?username=${username}`}
                 className="btn-outline px-4 py-2 border rounded-md text-white hover:bg-white hover:text-[#202774] transition-colors"
               >
                 Search

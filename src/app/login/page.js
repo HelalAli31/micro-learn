@@ -24,7 +24,6 @@ const Login = () => {
     });
 
     const data = await res.json();
-
     if (res.ok) {
       login(form.username); // Call login from context, passing the username
       router.push(`/profile?username=${form.username}`); // Redirect to profile
@@ -52,7 +51,7 @@ const Login = () => {
               placeholder="yourusername"
               className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
               required
-            />
+            />.
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">

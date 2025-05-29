@@ -4,12 +4,24 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true, // no duplicate usernames
+    unique: true,
     trim: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  searchHistory: {
+    type: Array,
+    default: [],
+  },
+  videoHistory: {
+    type: Array,
+    default: [],
+  },
+  quizHistory: {
+    type: Array,
+    default: [],
   },
 });
 

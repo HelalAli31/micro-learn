@@ -2,7 +2,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 
-export default function SearchHeader({ query, setQuery, handleSubmit }) {
+export default function SearchHeader({ query, setQuery, handleSubmit, username }) {
   return (
     <section className="py-12 bg-gradient-to-r from-white-500 to-white-600">
       <div className="container mx-auto px-4">

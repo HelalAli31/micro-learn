@@ -1,7 +1,11 @@
 // ✅ SearchSection.jsx
 import Link from "next/link"
+import { useAuth } from '../../src/app/context/AuthContext'; // Fix the path
 
 export default function SearchSection() {
+  const { username } = useAuth();
+  const safeUsername = username || "guest";
+
   return (
     <section className="py-16 bg-gradient-to-r from-[#b8c6d9] to-[#a5b4d0] text-black text-center">
       <div className="max-w-6xl mx-auto px-4">
@@ -9,7 +13,10 @@ export default function SearchSection() {
         <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-8">
           No account needed! Experience how quick and easy it is to find short, focused video lessons.
         </p>
-        <Link href="/search" className="bg-indigo-700 text-white px-6 md:px-8 py-3 rounded-md hover:bg-indigo-800 transition-colors">
+        <Link
+          href={`/search?username=${safeUsername}`}
+          className="btn-outline px-4 py-2 border rounded-md text-white hover:bg-white hover:text-[#202774] transition-colors"
+        >
           Search Any Topic
         </Link>
       </div>
