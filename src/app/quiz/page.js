@@ -1,9 +1,9 @@
+// src/app/quiz/page.js
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-// Import your new components
 import LoadingState from '../../../Components/ComponentsQuiz/LoadingState';
 import ErrorState from '../../../Components/ComponentsQuiz/ErrorState';
 import NoQuizAvailable from '../../../Components/ComponentsQuiz/NoQuizAvailable';
@@ -18,28 +18,31 @@ export default function QuizPage() {
   const [validationMessage, setValidationMessage] = useState(null);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const username = searchParams.get('username');
 
   useEffect(() => {
     try {
-      const storedQuiz = localStorage.getItem('currentQuiz');
-      if (storedQuiz) {
-        const parsedQuiz = JSON.parse(storedQuiz);
+      const quizDataParam = searchParams.get('quizData');
+
+      if (quizDataParam) {
+        const decodedQuiz = decodeURIComponent(quizDataParam);
+        const parsedQuiz = JSON.parse(decodedQuiz);
         setQuiz(parsedQuiz);
         setSelectedAnswers(new Array(parsedQuiz.length).fill(-1));
       } else {
         setError(
-          'No quiz found. Please go back to the search page and generate one.'
+          'No quiz found in URL. Please go back to the search page and generate one.'
         );
       }
     } catch (e) {
-      console.error('Failed to parse quiz from localStorage:', e);
+      console.error('Failed to parse quiz from URL parameter:', e);
       setError('Failed to load quiz data. It might be corrupted.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [searchParams]);
 
-  // Memoize these functions to prevent unnecessary re-renders in child components
   const handleOptionChange = useCallback(
     (questionIndex, optionIndex) => {
       const newSelectedAnswers = [...selectedAnswers];
@@ -52,24 +55,7 @@ export default function QuizPage() {
     [selectedAnswers, validationMessage]
   );
 
-  const handleSubmitQuiz = useCallback(
-    e => {
-      e.preventDefault();
-
-      if (!quiz) return;
-
-      const allAnswered = selectedAnswers.every(answer => answer !== -1);
-
-      if (allAnswered) {
-        setValidationMessage(null);
-        setShowResults(true);
-      } else {
-        setValidationMessage('Please choose an answer for all questions.'); // More specific message
-        setShowResults(false);
-      }
-    },
-    [quiz, selectedAnswers]
-  );
+  // --- START FIX: Move calculateScore BEFORE handleSubmitQuiz ---
 
   const calculateScore = useCallback(() => {
     if (!quiz) return 0;
@@ -82,7 +68,60 @@ export default function QuizPage() {
     return score;
   }, [quiz, selectedAnswers]);
 
-  // Render logic based on state
+  const handleSubmitQuiz = useCallback(
+    async (e) => {
+      e.preventDefault();
+
+      if (!quiz) return;
+
+      const allAnswered = selectedAnswers.every(answer => answer !== -1);
+
+      if (allAnswered) {
+        setValidationMessage(null);
+        setShowResults(true);
+
+        // calculateScore is now defined and accessible here
+        const score = calculateScore();
+        const quizHistoryEntry = {
+          
+          score: score,
+          totalQuestions: quiz.length,
+          fullQuizContent: quiz,
+          userAnswers: selectedAnswers,
+          dateTaken: new Date().toISOString(),
+        };
+
+        if (username) {
+          console.log('hhh\n\n\n\n\n');
+          try {
+            const response = await fetch('/api/add/quizHistory', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username: username, value: quizHistoryEntry }),
+            });
+
+            if (response.ok) {
+              console.log('Quiz history saved successfully!');
+            } else {
+              const errorData = await response.json();
+              console.error('Error saving quiz history:', response.status, errorData.error || response.statusText);
+            }
+          } catch (error) {
+            console.error('Network error saving quiz history:', error);
+          }
+        } else {
+          console.warn('Username is missing from URL, quiz history not saved.');
+        }
+      } else {
+        setValidationMessage('Please choose an answer for all questions.');
+        setShowResults(false);
+      }
+    },
+    [quiz, selectedAnswers, username, calculateScore]
+  );
+  // --- END FIX ---
+
+
   if (loading) {
     return <LoadingState />;
   }
@@ -110,8 +149,6 @@ export default function QuizPage() {
           showResults={showResults}
           validationMessage={validationMessage}
           calculateScore={calculateScore}
-          // Note: The Retake Quiz button logic is simplified within QuizForm for now.
-          // For a more robust solution, you might pass a dedicated `onRetake` prop.
         />
       </div>
     </div>
