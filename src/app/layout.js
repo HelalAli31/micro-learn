@@ -8,12 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'MicroLearn - Short, Focused Video Lessons',
-  description:
-    'Catch up on missed lectures with short, focused 6-minute video lessons.',
-  icons: {
-    icon: '/favicon.svg',
-  },
-  generator: 'v0.dev',
+  description: 'Catch up on missed lectures with short, focused 6-minute video lessons.',
 };
 
 export default function RootLayout({ children }) {
