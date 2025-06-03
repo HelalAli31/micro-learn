@@ -37,7 +37,56 @@ const ActivityOverview = ({ user }) => {
           {items.length > 0 ? (
             <ul className="list-disc list-inside space-y-1 pr-2">
               {items.map((item, i) => (
-                <li key={i} className="text-gray-700">{item}</li>
+                <li key={i} className="text-gray-700 mb-6">
+                  {typeof item === 'object' && item !== null && item.fullQuizContent ? (
+                    <div className="p-4 bg-gray-100 rounded shadow">
+                      <div className="font-bold text-blue-700 mb-2">
+                        📅 {new Date(item.dateTaken).toLocaleString()}
+                      </div>
+                      <div className="mb-2 text-green-700 font-semibold">
+                        ✅ Score: {item.score} / {item.totalQuestions}
+                      </div>
+
+                      {item.fullQuizContent.map((q, index) => (
+                        <div key={index} className="mb-4">
+                          <div className="font-medium text-gray-800 mb-1">
+                            Q{index + 1}: {q.question}
+                          </div>
+                          <ul className="list-disc pl-6 text-gray-700">
+                            {q.options.map((opt, j) => (
+                              <li
+                                key={j}
+                                className={
+                                  j === q.correctIndex
+                                    ? 'text-green-700 font-semibold'
+                                    : j === item.userAnswers[index]
+                                    ? 'text-red-500'
+                                    : 'text-gray-700'
+                                }
+                              >
+                                {opt}
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="text-sm mt-1">
+                            Your Answer:{" "}
+                            <span
+                              className={
+                                item.userAnswers[index] === q.correctIndex
+                                  ? 'text-green-700'
+                                  : 'text-red-500'
+                              }
+                            >
+                              {q.options[item.userAnswers[index]]}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    item
+                  )}
+                </li>
               ))}
             </ul>
           ) : (
