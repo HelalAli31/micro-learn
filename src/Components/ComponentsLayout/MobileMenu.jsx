@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 // CORRECTED IMPORT PATH
-import { useAuth } from '../../src/app/context/AuthContext'; // Fix the path
+import { useAuth } from '../../app/context/AuthContext'; // Fix the path
 import { useRouter } from 'next/navigation';
 
 export default function MobileMenu({ setIsMenuOpen }) {

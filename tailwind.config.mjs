@@ -2,22 +2,25 @@
 export default {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    // Ensure this path is correct for your ComponentsLayout folder
-    // If ComponentsLayout is a direct child of your project root:
-    './ComponentsLayout/**/*.{js,ts,jsx,tsx,mdx}',
-    // If you also have a 'Components' folder with other components, keep this:
-    './Components/**/*.{js,ts,jsx,tsx,mdx}',
-    './componentsSearch/**/*.{js,ts,jsx,tsx,mdx}',
-    './ComponentsQuiz/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
+    // Existing paths, adjust or remove based on their actual location:
+    // './ComponentsLayout/**/*.{js,ts,jsx,tsx,mdx}',
+    // './componentsSearch/**/*.{js,ts,jsx,tsx,mdx}',
+    // './ComponentsQuiz/**/*.{js,ts,jsx,tsx,mdx}',
+
+    // This is the correct path if your 'Components' folder is directly inside 'src':
+    './src/Components/**/*.{js,ts,jsx,tsx,mdx}',
+
+    // Keep this for files directly in 'src/app' or its subdirectories:
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
         background: 'var(--background)',
-        foreground: 'var(--foreground)'
-      }
-    }
+        foreground: 'var(--foreground)',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
+  

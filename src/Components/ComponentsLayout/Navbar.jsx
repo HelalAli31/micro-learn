@@ -2,7 +2,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '../../src/app/context/AuthContext';
+import { useAuth } from '../../app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar({ toggleMenu, isMenuOpen }) {

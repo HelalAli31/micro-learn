@@ -1,13 +1,13 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../src/app/context/AuthContext"; // Adjust this path if needed
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../app/context/AuthContext'; // Adjust this path if needed
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const LoginComponent = () => {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const router = useRouter();
   const { login } = useAuth();
 
@@ -18,10 +18,10 @@ const LoginComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, mode: "login" }),
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, mode: 'login' }),
     });
 
     const data = await res.json();
@@ -29,7 +29,7 @@ const LoginComponent = () => {
       login(form.username);
       router.push(`/profile?username=${form.username}`);
     } else {
-      setError(data.error || "Invalid credentials");
+      setError(data.error || 'Invalid credentials');
     }
   };
 
@@ -80,7 +80,7 @@ const LoginComponent = () => {
                 <Lock className="w-4 h-4" />
               </span>
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
@@ -131,7 +131,7 @@ const LoginComponent = () => {
         )}
 
         <p className="text-sm text-center text-gray-600 mt-6">
-          Don’t have an account?{" "}
+          Don’t have an account?{' '}
           <a
             href="/signup"
             className="text-purple-600 font-medium hover:underline"

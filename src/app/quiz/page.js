@@ -4,10 +4,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import LoadingState from '../../../Components/ComponentsQuiz/LoadingState';
-import ErrorState from '../../../Components/ComponentsQuiz/ErrorState';
-import NoQuizAvailable from '../../../Components/ComponentsQuiz/NoQuizAvailable';
-import QuizForm from '../../../Components/ComponentsQuiz/QuizForm';
+import LoadingState from '../../Components/ComponentsQuiz/LoadingState';
+import ErrorState from '../../Components/ComponentsQuiz/ErrorState';
+import NoQuizAvailable from '../../Components/ComponentsQuiz/NoQuizAvailable';
+import QuizForm from '../../Components/ComponentsQuiz/QuizForm';
 
 export default function QuizPage() {
   const [quiz, setQuiz] = useState(null);
@@ -74,7 +74,7 @@ export default function QuizPage() {
 
       if (!quiz) return;
 
-      const allAnswered = selectedAnswers.every(answer => answer !== -1);
+      const allAnswered = selectedAnswers.every((answer) => answer !== -1);
 
       if (allAnswered) {
         setValidationMessage(null);
@@ -83,7 +83,6 @@ export default function QuizPage() {
         // calculateScore is now defined and accessible here
         const score = calculateScore();
         const quizHistoryEntry = {
-          
           score: score,
           totalQuestions: quiz.length,
           fullQuizContent: quiz,
@@ -97,14 +96,21 @@ export default function QuizPage() {
             const response = await fetch('/api/add/quizHistory', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username: username, value: quizHistoryEntry }),
+              body: JSON.stringify({
+                username: username,
+                value: quizHistoryEntry,
+              }),
             });
 
             if (response.ok) {
               console.log('Quiz history saved successfully!');
             } else {
               const errorData = await response.json();
-              console.error('Error saving quiz history:', response.status, errorData.error || response.statusText);
+              console.error(
+                'Error saving quiz history:',
+                response.status,
+                errorData.error || response.statusText
+              );
             }
           } catch (error) {
             console.error('Network error saving quiz history:', error);
@@ -120,7 +126,6 @@ export default function QuizPage() {
     [quiz, selectedAnswers, username, calculateScore]
   );
   // --- END FIX ---
-
 
   if (loading) {
     return <LoadingState />;

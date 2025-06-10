@@ -4,12 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import SearchHeader from '../../../Components/ComponentsSearch/SearchHeader.jsx';
-import LoadingState from '../../../Components/ComponentsSearch/LoadingState.jsx';
-import ResultsSection from '../../../Components/ComponentsSearch/ResultsSection.jsx';
-import VideoModal from '../../../Components/ComponentsSearch/VideoModal.jsx';
-import InitialState from '../../../Components/ComponentsSearch/InitialState.jsx';
-import QuizButton from '../../../Components/ComponentsSearch/QuizButton.jsx';
+import SearchHeader from '../../Components/ComponentsSearch/SearchHeader.jsx';
+import LoadingState from '../../Components/ComponentsSearch/LoadingState.jsx';
+import ResultsSection from '../../Components/ComponentsSearch/ResultsSection.jsx';
+import VideoModal from '../../Components/ComponentsSearch/VideoModal.jsx';
+import InitialState from '../../Components/ComponentsSearch/InitialState.jsx';
+import QuizButton from '../../Components/ComponentsSearch/QuizButton.jsx';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
@@ -175,11 +175,15 @@ export default function SearchPage() {
       {username !== 'guest' && quiz.length > 0 && (
         <QuizButton handleMakeQuiz={handleMakeQuiz} />
       )}
-      {username !== 'guest' && hasSearched && !loading && quiz.length === 0 && explanation && (
-        <div className="text-center text-gray-500 mt-12 mb-10">
-          No quiz could be generated for this topic.
-        </div>
-      )}
+      {username !== 'guest' &&
+        hasSearched &&
+        !loading &&
+        quiz.length === 0 &&
+        explanation && (
+          <div className="text-center text-gray-500 mt-12 mb-10">
+            No quiz could be generated for this topic.
+          </div>
+        )}
     </div>
   );
 }
