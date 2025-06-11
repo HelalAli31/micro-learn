@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import ProfileCard from './ProfileCard';
-import ActivityOverview from './ActivityOverview';
-import UserInsight from './UserInsight'; // 💡 חדש
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import ProfileCard from "./ProfileCard";
+import ActivityOverview from "./ActivityOverview";
+import UserInsight from "./UserInsight"; // 💡 חדש
+import UserBadges from "./UserBadges";
 
 const ProfilePageContent = () => {
   const searchParams = useSearchParams();
-  const username = searchParams.get('username');
+  const username = searchParams.get("username");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ const ProfilePageContent = () => {
         const data = await res.json();
         setUser(data);
       } catch (error) {
-        console.error('Failed to load user data:', error);
+        console.error("Failed to load user data:", error);
       }
     };
 
@@ -32,20 +33,17 @@ const ProfilePageContent = () => {
   }
 
   return (
-    <section className="min-h-screen bg-white text-gray-800 px-4 py-12">
+    <section className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 px-4 py-12">
       <div className="max-w-4xl mx-auto space-y-10">
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           My Profile
         </h1>
-
         <ProfileCard user={user} />
-
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+        <UserBadges user={user} />
+        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           Activity Overview
         </h2>
-
         <ActivityOverview user={user} />
-
         <UserInsight user={user} /> {/* ✅ מוסיף תובנה */}
       </div>
     </section>
@@ -53,3 +51,4 @@ const ProfilePageContent = () => {
 };
 
 export default ProfilePageContent;
+

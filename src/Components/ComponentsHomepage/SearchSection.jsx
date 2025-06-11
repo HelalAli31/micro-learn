@@ -1,10 +1,10 @@
 // ✅ SearchSection.jsx
-import Link from 'next/link';
-import { useAuth } from '../../app/context/AuthContext'; // Fix the path
+import Link from "next/link";
+import { useAuth } from "../../app/context/AuthContext"; // Fix the path
 
 export default function SearchSection() {
   const { username } = useAuth();
-  const safeUsername = username || 'guest';
+  const safeUsername = username || "guest";
 
   return (
     <section className="py-16 bg-gradient-to-r from-[#b8c6d9] to-[#a5b4d0] text-black text-center">
@@ -18,7 +18,7 @@ export default function SearchSection() {
         </p>
         <Link
           href={`/search?username=${safeUsername}`}
-          className="btn-outline px-4 py-2 border rounded-md text-white border-purple-500 bg-purple-500 hover:bg-purple-600 hover:border-purple-600 transition-colors"
+          className="btn-outline px-4 py-2 border rounded-md  border-purple-500 bg-purple-500 hover:bg-purple-600 hover:border-purple-600 transition-colors"
         >
           Search Any Topic
         </Link>

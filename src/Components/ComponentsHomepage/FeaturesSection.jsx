@@ -1,33 +1,44 @@
-// ✅ FeaturesSection.jsx
-
 export default function FeaturesSection() {
   return (
-    <section id="features" className="section bg-[#e6eaef] py-12">
-      <h2 className="section-title">Why MicroLearn Works</h2>
-      <p className="section-description">
-        Our platform combines micro-learning, personalized tracking, and AI quizzes.
+    <section
+      id="features"
+      className="section  py-12 bg-[#e6eaef] dark:bg-[#1e1e1e]"
+    >
+      <h2 className="section-title text-gray-900 dark:text-white">
+        Why MicroLearn Works
+      </h2>
+      <p className="section-description text-gray-700 dark:text-gray-300">
+        Our platform combines micro-learning, personalized tracking, and AI
+        quizzes.
       </p>
       <div className="features-grid grid-cols-1 md:grid-cols-3">
         {[
           {
             title: "Short & Focused",
-            desc: "All videos are under 6 minutes for max retention."
+            desc: "All videos are under 6 minutes for max retention.",
           },
           {
             title: "Learning History",
-            desc: "Track progress with search and video history."
+            desc: "Track progress with search and video history.",
           },
           {
             title: "AI Mini Quizzes",
-            desc: "Smart quizzes reinforce what you’ve watched."
-          }
+            desc: "Smart quizzes reinforce what you’ve watched.",
+          },
         ].map((feat, i) => (
-          <div key={i} className="feature-card bg-[#bfd1f3]">
-            <h3 className="feature-title">{feat.title}</h3>
-            <p className="feature-description">{feat.desc}</p>
+          <div
+            key={i}
+            className="feature-card bg-[#bfd1f3] dark:bg-[#2b2b2b] dark:text-white"
+          >
+            <h3 className="feature-title text-gray-900 dark:text-white">
+              {feat.title}
+            </h3>
+            <p className="feature-description text-gray-700 dark:text-gray-300">
+              {feat.desc}
+            </p>
           </div>
         ))}
       </div>
     </section>
-  )
+  );
 }

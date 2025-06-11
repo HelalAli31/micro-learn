@@ -1,32 +1,32 @@
 // src/app/search/page.js
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
-import SearchHeader from '../../Components/ComponentsSearch/SearchHeader.jsx';
-import LoadingState from '../../Components/ComponentsSearch/LoadingState.jsx';
-import ResultsSection from '../../Components/ComponentsSearch/ResultsSection.jsx';
-import VideoModal from '../../Components/ComponentsSearch/VideoModal.jsx';
-import InitialState from '../../Components/ComponentsSearch/InitialState.jsx';
-import QuizButton from '../../Components/ComponentsSearch/QuizButton.jsx';
+import SearchHeader from "../../Components/ComponentsSearch/SearchHeader.jsx";
+import LoadingState from "../../Components/ComponentsSearch/LoadingState.jsx";
+import ResultsSection from "../../Components/ComponentsSearch/ResultsSection.jsx";
+import VideoModal from "../../Components/ComponentsSearch/VideoModal.jsx";
+import InitialState from "../../Components/ComponentsSearch/InitialState.jsx";
+import QuizButton from "../../Components/ComponentsSearch/QuizButton.jsx";
 
 export default function SearchPage() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [videos, setVideos] = useState([]);
   const [explanation, setExplanation] = useState(null);
-  const [summary, setSummary] = useState(''); // New state for summary
+  const [summary, setSummary] = useState(""); // New state for summary
   const [quiz, setQuiz] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const searchParams = useSearchParams();
-  const username = searchParams.get('username');
+  const username = searchParams.get("username");
 
   const router = useRouter();
 
   useEffect(() => {
-    const q = searchParams.get('q');
+    const q = searchParams.get("q");
     if (q) {
       setQuery(q);
       handleSearch(q);
@@ -40,7 +40,7 @@ export default function SearchPage() {
     setLoading(true);
     setHasSearched(true);
     setExplanation(null);
-    setSummary(''); // Reset summary
+    setSummary(""); // Reset summary
     setQuiz([]);
 
     try {
@@ -63,25 +63,25 @@ export default function SearchPage() {
       );
 
       setExplanation({
-        text: explanationData.explanation || '',
+        text: explanationData.explanation || "",
         query: explanationData.query || searchTerm,
       });
-      setSummary(explanationData.summary || ''); // Set the new summary state
+      setSummary(explanationData.summary || ""); // Set the new summary state
 
       setQuiz(explanationData.quiz || []);
 
-      await fetch('/api/add/searchHistory', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/add/searchHistory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: username,
           value: searchTerm,
         }),
       });
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
       setExplanation(null);
-      setSummary(''); // Clear summary on error
+      setSummary(""); // Clear summary on error
     } finally {
       setLoading(false);
     }
@@ -97,20 +97,20 @@ export default function SearchPage() {
 
     if (username && video) {
       try {
-        await fetch('/api/add/videoHistory', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/add/videoHistory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             username: username,
             value: video.url,
           }),
         });
-        console.log('Video history saved successfully!');
+        console.log("Video history saved successfully!");
       } catch (error) {
-        console.error('Error saving video history:', error);
+        console.error("Error saving video history:", error);
       }
     } else {
-      console.warn('Cannot save video history: username or video is missing.');
+      console.warn("Cannot save video history: username or video is missing.");
     }
   }
 
@@ -125,18 +125,18 @@ export default function SearchPage() {
         const encodedQuiz = encodeURIComponent(quizJsonString);
         router.push(`/quiz?quizData=${encodedQuiz}&username=${username}`);
       } catch (error) {
-        console.error('Error encoding quiz data for URL:', error);
-        alert('Could not generate quiz link. Please try again.');
+        console.error("Error encoding quiz data for URL:", error);
+        alert("Could not generate quiz link. Please try again.");
       }
     } else {
       alert(
-        'Please perform a search and generate an explanation first to make a quiz.'
+        "Please perform a search and generate an explanation first to make a quiz."
       );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <SearchHeader
         query={query}
         setQuery={setQuery}
@@ -172,10 +172,10 @@ export default function SearchPage() {
         />
       )}
 
-      {username !== 'guest' && quiz.length > 0 && (
+      {username !== "guest" && quiz.length > 0 && (
         <QuizButton handleMakeQuiz={handleMakeQuiz} />
       )}
-      {username !== 'guest' &&
+      {username !== "guest" &&
         hasSearched &&
         !loading &&
         quiz.length === 0 &&

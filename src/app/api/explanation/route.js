@@ -1,15 +1,18 @@
 // api/explanation/route.js
-import { URL } from 'url';
+import { URL } from "url";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get('query');
+  const query = searchParams.get("query");
 
   if (!query) {
-    return new Response(JSON.stringify({ explanation: '', summary: '', quiz: [] }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({ explanation: "", summary: "", quiz: [] }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -18,41 +21,53 @@ export async function GET(request) {
   try {
     // --- Step 1: Generate the Full Explanation ---
     const explanationResponse = await fetch(geminiApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `Provide a clear, concise explanation of: ${query}. Keep it educational and under 200 words, suitable for someone learning about this topic for the first time.` }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 300 }
-      })
+        contents: [
+          {
+            parts: [
+              {
+                text: `Provide a clear, concise explanation of: ${query}. Keep it educational and under 200 words, suitable for someone learning about this topic for the first time.`,
+              },
+            ],
+          },
+        ],
+        generationConfig: { temperature: 0.2, maxOutputTokens: 300 },
+      }),
     });
 
     const explanationData = await explanationResponse.json();
-    const explanation = explanationData.candidates?.[0]?.content?.parts?.[0]?.text || 'No explanation available.';
+    const explanation =
+      explanationData.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No explanation available.";
 
     // --- Step 2: Generate a Summary based on the Full Explanation ---
-    let summary = '';
-    if (explanation !== 'No explanation available.') {
+    let summary = "";
+    if (explanation !== "No explanation available.") {
       const summaryPrompt = `Summarize the following explanation into a concise paragraph of 1-2  sentences. Focus on the core concepts only, and do NOT use bullet points or any special characters for formatting.
 
 Explanation:
 ${explanation}`;
 
       const summaryResponse = await fetch(geminiApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: summaryPrompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 150 } // Adjust maxOutputTokens for summary length
-        })
+          generationConfig: { temperature: 0.2, maxOutputTokens: 150 }, // Adjust maxOutputTokens for summary length
+        }),
       });
 
       const summaryData = await summaryResponse.json();
-      summary = summaryData.candidates?.[0]?.content?.parts?.[0]?.text || 'No summary available.';
+      summary =
+        summaryData.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "No summary available.";
     }
 
     // --- Step 3: Generate Four Quiz Questions based on the Explanation ---
     let quiz = [];
-    if (explanation !== 'No explanation available.') {
+    if (explanation !== "No explanation available.") {
       const quizPrompt = `Based on the following explanation, create four multiple-choice quiz questions. Each question should have 4 options, and you must indicate the correct option's index (0-indexed). The response must be a JSON array of objects, with each object having the following exact structure:
           [
             {
@@ -102,12 +117,12 @@ ${explanation}`;
           `;
 
       const quizResponse = await fetch(geminiApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: quizPrompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
-        })
+          generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
+        }),
       });
 
       const quizData = await quizResponse.json();
@@ -119,8 +134,8 @@ ${explanation}`;
           if (jsonMatch && jsonMatch[1]) {
             quiz = JSON.parse(jsonMatch[1]);
           } else if (
-            quizText.trim().startsWith('[') &&
-            quizText.trim().endsWith(']')
+            quizText.trim().startsWith("[") &&
+            quizText.trim().endsWith("]")
           ) {
             quiz = JSON.parse(quizText);
           } else {
@@ -128,20 +143,27 @@ ${explanation}`;
           }
         }
       } catch (parseError) {
-        console.error('Error parsing quiz JSON from Gemini response:', parseError);
+        console.error(
+          "Error parsing quiz JSON from Gemini response:",
+          parseError
+        );
         quiz = [];
       }
     }
 
     // --- Send the Explanation, Summary, and Quiz to the Frontend ---
     return new Response(JSON.stringify({ explanation, summary, quiz }), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('Gemini API request failed:', error);
+    console.error("Gemini API request failed:", error);
     return new Response(
-      JSON.stringify({ explanation: 'Error fetching data.', summary: '', quiz: [] }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        explanation: "Error fetching data.",
+        summary: "",
+        quiz: [],
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

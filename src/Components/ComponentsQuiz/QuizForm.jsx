@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import QuizQuestion from './QuizQuestion'; // Import the new QuizQuestion component
+import React from "react";
+import QuizQuestion from "./QuizQuestion";
 
 export default function QuizForm({
   quiz,
@@ -10,12 +10,12 @@ export default function QuizForm({
   handleSubmitQuiz,
   showResults,
   validationMessage,
-  calculateScore
+  calculateScore,
 }) {
   return (
     <form
       onSubmit={handleSubmitQuiz}
-      className="bg-white rounded-xl shadow-lg p-8"
+      className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-8"
     >
       {quiz.map((quizItem, index) => (
         <QuizQuestion
@@ -29,7 +29,7 @@ export default function QuizForm({
       ))}
 
       {validationMessage && (
-        <p className="text-red-600 text-center text-lg mb-4">
+        <p className="text-red-600 dark:text-red-400 text-center text-lg mb-4">
           {validationMessage}
         </p>
       )}
@@ -43,16 +43,11 @@ export default function QuizForm({
         </button>
       ) : (
         <div className="text-center mt-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Your Score: {calculateScore()} / {quiz.length}
           </h2>
           <button
-            onClick={() => {
-              // This logic for retaking quiz is passed up to the parent or managed here
-              // For simplicity, we'll assume the parent `QuizPage` will handle resetting states
-              // You might want to lift this logic to `QuizPage` or pass a `onRetake` prop
-              window.location.reload(); // Simple refresh for retake
-            }}
+            onClick={() => window.location.reload()}
             className="inline-block py-3 px-6 bg-[#293292] text-white rounded-xl font-semibold hover:bg-[#1a1f5d] transition duration-300"
           >
             Retake Quiz

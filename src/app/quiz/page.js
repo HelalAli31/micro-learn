@@ -1,13 +1,13 @@
 // src/app/quiz/page.js
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import LoadingState from '../../Components/ComponentsQuiz/LoadingState';
-import ErrorState from '../../Components/ComponentsQuiz/ErrorState';
-import NoQuizAvailable from '../../Components/ComponentsQuiz/NoQuizAvailable';
-import QuizForm from '../../Components/ComponentsQuiz/QuizForm';
+import LoadingState from "../../Components/ComponentsQuiz/LoadingState";
+import ErrorState from "../../Components/ComponentsQuiz/ErrorState";
+import NoQuizAvailable from "../../Components/ComponentsQuiz/NoQuizAvailable";
+import QuizForm from "../../Components/ComponentsQuiz/QuizForm";
 
 export default function QuizPage() {
   const [quiz, setQuiz] = useState(null);
@@ -19,11 +19,11 @@ export default function QuizPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const username = searchParams.get('username');
+  const username = searchParams.get("username");
 
   useEffect(() => {
     try {
-      const quizDataParam = searchParams.get('quizData');
+      const quizDataParam = searchParams.get("quizData");
 
       if (quizDataParam) {
         const decodedQuiz = decodeURIComponent(quizDataParam);
@@ -32,12 +32,12 @@ export default function QuizPage() {
         setSelectedAnswers(new Array(parsedQuiz.length).fill(-1));
       } else {
         setError(
-          'No quiz found in URL. Please go back to the search page and generate one.'
+          "No quiz found in URL. Please go back to the search page and generate one."
         );
       }
     } catch (e) {
-      console.error('Failed to parse quiz from URL parameter:', e);
-      setError('Failed to load quiz data. It might be corrupted.');
+      console.error("Failed to parse quiz from URL parameter:", e);
+      setError("Failed to load quiz data. It might be corrupted.");
     } finally {
       setLoading(false);
     }
@@ -91,11 +91,11 @@ export default function QuizPage() {
         };
 
         if (username) {
-          console.log('hhh\n\n\n\n\n');
+          console.log("hhh\n\n\n\n\n");
           try {
-            const response = await fetch('/api/add/quizHistory', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+            const response = await fetch("/api/add/quizHistory", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 username: username,
                 value: quizHistoryEntry,
@@ -103,23 +103,23 @@ export default function QuizPage() {
             });
 
             if (response.ok) {
-              console.log('Quiz history saved successfully!');
+              console.log("Quiz history saved successfully!");
             } else {
               const errorData = await response.json();
               console.error(
-                'Error saving quiz history:',
+                "Error saving quiz history:",
                 response.status,
                 errorData.error || response.statusText
               );
             }
           } catch (error) {
-            console.error('Network error saving quiz history:', error);
+            console.error("Network error saving quiz history:", error);
           }
         } else {
-          console.warn('Username is missing from URL, quiz history not saved.');
+          console.warn("Username is missing from URL, quiz history not saved.");
         }
       } else {
-        setValidationMessage('Please choose an answer for all questions.');
+        setValidationMessage("Please choose an answer for all questions.");
         setShowResults(false);
       }
     },

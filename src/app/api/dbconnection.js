@@ -1,8 +1,6 @@
 import mongoose from "mongoose"; // Imports the Mongoose library
 
-const MONGODB_URI =
-  "mongodb+srv://helalali358:helalpro789@cluster0.kghsp.mongodb.net/microlearn?retryWrites=true&w=majority&appName=Cluster0"; // Reads the URI from your .env.local
-
+const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
   console.error("⚠️ MONGODB_URI is missing from environment variables");
   throw new Error("Missing MONGODB_URI");

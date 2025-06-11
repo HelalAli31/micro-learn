@@ -1,15 +1,17 @@
 // ✅ HeroSection.jsx
-import Image from "next/image"
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="hero-section bg-[#e6eaef]">
+    <section className="hero-section bg-[var(--color-bg)] text-[var(--color-text)]">
       <div className="hero-content">
         <h1 className="hero-title">
           Learn Faster with <span className="text-accent">Micro-Learning</span>
         </h1>
         <p className="hero-description">
-          Catch up on missed lectures with short, focused 6-minute video lessons.
+          Catch up on missed lectures with short, focused 6-minute video
+          lessons. Designed for busy students, MicroLearn helps you grasp key
+          concepts quickly and efficiently—anytime, anywhere.
         </p>
       </div>
       <div className="mt-8 md:mt-0">
@@ -22,5 +24,5 @@ export default function HeroSection() {
         />
       </div>
     </section>
-  )
+  );
 }

@@ -3,16 +3,24 @@
 @tailwind utilities;
 
 :root {
+  --color-bg: #f5f7fa; /* Light background */
+  --color-text: #1a202c; /* Dark text */
+  --color-accent: #4f46e5;
   --primary: 39, 39, 130;
   --primary-light: 214, 219, 230;
   --primary-lighter: 226, 232, 240;
-  --accent: 79, 70, 229;
+}
+
+.dark {
+  --color-bg: #1e1e1e;
+  --color-text: #ffffff;
+  --color-accent: #66b2ff;
 }
 
 body {
   font-family: "Inter", sans-serif;
-  color: #1a202c;
-  background-color: rgb(var(--primary-lighter));
+  color: var(--color-text);
+  background-color: var(--color-bg);
   overflow-x: hidden;
   width: 100%;
 }
@@ -154,7 +162,7 @@ body {
 .hero-title {
   font-size: 2rem;
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   margin-bottom: 1rem;
   line-height: 1.2;
 }
@@ -177,7 +185,7 @@ body {
 
 .hero-description {
   font-size: 1rem;
-  color: #4a5568;
+  color: var(--color-text);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
@@ -210,7 +218,7 @@ body {
 .search-title {
   font-size: 1.75rem;
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   margin-bottom: 1rem;
 }
 
@@ -222,7 +230,7 @@ body {
 
 .search-description {
   font-size: 1rem;
-  color: #1a202c;
+  color: var(--color-text);
   max-width: 800px;
   margin: 0 auto 2rem;
 }
@@ -268,7 +276,7 @@ body {
 .section-title {
   font-size: 1.75rem;
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   margin-bottom: 1rem;
   text-align: center;
 }
@@ -281,7 +289,7 @@ body {
 
 .section-description {
   font-size: 1rem;
-  color: #4a5568;
+  color: var(--color-text);
   text-align: center;
   max-width: 800px;
   margin: 0 auto 2rem;
@@ -340,7 +348,7 @@ body {
 .feature-title {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   margin-bottom: 0.75rem;
 }
 
@@ -351,7 +359,7 @@ body {
 }
 
 .feature-description {
-  color: #4a5568;
+  color: var(--color-text);
   line-height: 1.6;
   font-size: 0.9375rem;
 }
@@ -407,7 +415,7 @@ body {
 .step-title {
   font-size: 1.125rem;
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   margin-bottom: 0.75rem;
 }
 
@@ -419,7 +427,7 @@ body {
 }
 
 .step-description {
-  color: #4a5568;
+  color: var(--color-text);
   line-height: 1.6;
   font-size: 0.9375rem;
 }
@@ -432,7 +440,7 @@ body {
 
 .step-arrow {
   font-size: 1.75rem;
-  color: #4a5568;
+  color: var(--color-text);
 }
 
 @media (min-width: 768px) {
@@ -443,7 +451,7 @@ body {
 
 .step-arrow-mobile {
   font-size: 1.75rem;
-  color: #4a5568;
+  color: var(--color-text);
   text-align: center;
   margin: 0.25rem 0;
 }
@@ -491,7 +499,7 @@ body {
 }
 
 .testimonial-text {
-  color: #4a5568;
+  color: var(--color-text);
   margin-bottom: 1.25rem;
   line-height: 1.6;
   font-size: 0.9375rem;
@@ -532,7 +540,7 @@ body {
 
 .author-info h4 {
   font-weight: bold;
-  color: #1a202c;
+  color: var(--color-text);
   font-size: 0.9375rem;
 }
 

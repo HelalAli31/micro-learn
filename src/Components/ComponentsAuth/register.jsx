@@ -149,61 +149,64 @@ const SignupComponent = () => {
   }, [captchaType]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-2xl shadow-xl">
+        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           Create Your Account
         </h2>
-        <p className="text-center text-gray-500 mb-6">
+        <p className="text-center text-gray-500 dark:text-gray-300 mb-6">
           Join MicroLearn and start learning today
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Full Name */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Full Name
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+              <User className="absolute left-3 top-3 text-gray-400" />
               <input
                 name="username"
                 value={form.username}
                 onChange={handleChange}
                 placeholder="your name"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
             </div>
           </div>
 
+          {/* Email */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+              <Mail className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
             </div>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+              <Lock className="absolute left-3 top-3 text-gray-400" />
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 value={form.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
               <span
@@ -217,13 +220,14 @@ const SignupComponent = () => {
                 )}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">
               Password must be at least 8 characters long
             </p>
           </div>
 
+          {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Confirm Password
             </label>
             <input
@@ -232,25 +236,27 @@ const SignupComponent = () => {
               value={form.confirm}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
               required
             />
           </div>
 
+          {/* CAPTCHA TYPE */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Choose CAPTCHA Type:
             </label>
             <select
               value={captchaType}
               onChange={handleCaptchaChange}
-              className="w-full px-3 py-2 border rounded-md border-gray-300"
+              className="w-full px-3 py-2 border rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option value="arithmetic">Arithmetic</option>
               <option value="image">Image Selection</option>
             </select>
           </div>
 
+          {/* CAPTCHA COMPONENT */}
           <CaptchaSection
             captchaType={captchaType}
             challenge={challenge}
@@ -264,7 +270,11 @@ const SignupComponent = () => {
             generateImageCaptcha={generateImageCaptcha}
           />
 
-          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-600 mt-2 dark:text-red-500">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -276,10 +286,12 @@ const SignupComponent = () => {
         </form>
 
         {message && (
-          <p className="text-center mt-4 text-sm text-gray-600">{message}</p>
+          <p className="text-center mt-4 text-sm text-gray-600 dark:text-gray-300">
+            {message}
+          </p>
         )}
 
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-4">
           Already have an account?{" "}
           <Link href="/login" className="text-purple-600 hover:underline">
             Sign in

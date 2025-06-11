@@ -1,4 +1,3 @@
-// components/CaptchaSection.jsx
 "use client";
 import React from "react";
 import { RefreshCcw } from "lucide-react";
@@ -19,17 +18,17 @@ const CaptchaSection = ({
     <div>
       {captchaType === "arithmetic" ? (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Solve the CAPTCHA:
           </label>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-800 dark:text-white">
               {challenge}
             </span>
             <button
               type="button"
               onClick={generateArithmetic}
-              className="text-purple-600"
+              className="text-purple-600 dark:text-purple-400"
             >
               <RefreshCcw className="w-4 h-4" />
             </button>
@@ -38,18 +37,19 @@ const CaptchaSection = ({
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Enter the answer"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-md"
           />
         </div>
       ) : (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select all images containing: <b>{correctLabel}</b>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Select all images containing:{" "}
+            <b className="text-black dark:text-white">{correctLabel}</b>
           </label>
           <button
             type="button"
             onClick={generateImageCaptcha}
-            className="text-purple-600 text-sm mb-2"
+            className="text-purple-600 dark:text-purple-400 text-sm mb-2"
           >
             🔄 Refresh
           </button>
@@ -63,7 +63,7 @@ const CaptchaSection = ({
                 className={`h-24 w-full object-cover rounded cursor-pointer border-4 ${
                   selectedIndexes.has(i.toString())
                     ? "border-purple-600"
-                    : "border-transparent"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
               />
             ))}

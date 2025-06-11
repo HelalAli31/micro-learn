@@ -1,13 +1,13 @@
-'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../app/context/AuthContext'; // Adjust this path if needed
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../app/context/AuthContext";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
 const LoginComponent = () => {
-  const [form, setForm] = useState({ username: '', password: '' });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
   const { login } = useAuth();
 
@@ -18,10 +18,10 @@ const LoginComponent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, mode: 'login' }),
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, mode: "login" }),
     });
 
     const data = await res.json();
@@ -29,24 +29,24 @@ const LoginComponent = () => {
       login(form.username);
       router.push(`/profile?username=${form.username}`);
     } else {
-      setError(data.error || 'Invalid credentials');
+      setError(data.error || "Invalid credentials");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-2xl shadow-xl">
+        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           Welcome Back
         </h2>
-        <p className="text-center text-gray-500 mb-8">
+        <p className="text-center text-gray-500 dark:text-gray-300 mb-8">
           Sign in to continue your learning journey
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-200">
               Email Address
             </label>
             <div className="relative">
@@ -59,7 +59,7 @@ const LoginComponent = () => {
                 value={form.username}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-3 py-2 border rounded-md border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-10 pr-3 py-2 border rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
             </div>
@@ -68,24 +68,21 @@ const LoginComponent = () => {
           {/* Password */}
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Password
               </label>
-              <a href="#" className="text-sm text-purple-600 hover:underline">
-                Forgot password?
-              </a>
             </div>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                 <Lock className="w-4 h-4" />
               </span>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-2 border rounded-md border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none"
+                className="w-full pl-10 pr-10 py-2 border rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
               <span
@@ -107,11 +104,11 @@ const LoginComponent = () => {
               id="remember"
               name="remember"
               type="checkbox"
-              className="h-4 w-4 text-purple-600 border-gray-300 rounded"
+              className="h-4 w-4 text-purple-600 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-500"
             />
             <label
               htmlFor="remember"
-              className="ml-2 block text-sm text-gray-700"
+              className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
             >
               Remember me
             </label>
@@ -130,8 +127,8 @@ const LoginComponent = () => {
           <p className="text-red-600 text-sm mt-4 text-center">{error}</p>
         )}
 
-        <p className="text-sm text-center text-gray-600 mt-6">
-          Don’t have an account?{' '}
+        <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-6">
+          Don’t have an account?{" "}
           <a
             href="/signup"
             className="text-purple-600 font-medium hover:underline"

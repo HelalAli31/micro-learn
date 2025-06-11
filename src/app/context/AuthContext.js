@@ -1,7 +1,7 @@
 // app/context/AuthContext.js
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Create the AuthContext
 const AuthContext = createContext(null);
@@ -10,7 +10,7 @@ const AuthContext = createContext(null);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -20,18 +20,27 @@ export function AuthProvider({ children }) {
   // State for login status, initialized to false (no persistence without localStorage)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // State for username, initialized to empty string (no persistence without localStorage)
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+      setIsLoggedIn(true);
+    }
+  }, []);
   // Function to handle user login
   const login = (userIdentifier) => {
     setIsLoggedIn(true);
     setUsername(userIdentifier);
+    localStorage.setItem("username", userIdentifier); //  persist login
   };
 
   // Function to handle user logout
   const logout = () => {
     setIsLoggedIn(false);
-    setUsername('');
+    setUsername("");
+    localStorage.removeItem("username"); //  clear from storage
   };
 
   // The value provided to consumers of this context

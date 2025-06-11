@@ -1,26 +1,32 @@
 // app/layout.js
-import { Inter } from 'next/font/google';
-import './globals.css';
-import LayoutHeader from '../Components/ComponentsLayout/LayoutHeader';
-import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
+import { Inter } from "next/font/google";
+import "./globals.css";
+import LayoutHeader from "../Components/ComponentsLayout/LayoutHeader";
+import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "next-themes";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'MicroLearn - Short, Focused Video Lessons',
+  title: "MicroLearn - Short, Focused Video Lessons",
   description:
-    'Catch up on missed lectures with short, focused 6-minute video lessons.',
+    "Catch up on missed lectures with short, focused 6-minute video lessons.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Wrap the entire body content with AuthProvider */}
-        <AuthProvider>
-          <LayoutHeader />
-          <main className="overflow-x-hidden">{children}</main>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={true}
+        >
+          <AuthProvider>
+            <LayoutHeader />
+            <main className="overflow-x-hidden">{children}</main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
