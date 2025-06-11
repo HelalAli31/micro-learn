@@ -47,7 +47,7 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
 
         <div className="aspect-video bg-black">
           <iframe
-            src={`http://www.youtube.com/embed/${selectedVideo.id}?autoplay=1`}
+            src={`https://www.youtube.com/embed/${selectedVideo.id}?autoplay=1`}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
