@@ -1,17 +1,11 @@
-import dynamic from "next/dynamic";
+// app/quiz/page.js
 import { Suspense } from "react";
-
-// ✅ Dynamically import the Client Component (with no SSR)
-const ClientQuizPage = dynamic(() => import("./ClientQuizPage"), {
-  ssr: false,
-});
+import QuizClientComponent from "./ClientQuizPage";
 
 export default function QuizPage() {
   return (
-    <Suspense
-      fallback={<div className="text-center py-20">Loading Quiz...</div>}
-    >
-      <ClientQuizPage />
+    <Suspense fallback={<div>Loading quiz...</div>}>
+      <QuizClientComponent />
     </Suspense>
   );
 }
