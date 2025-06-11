@@ -1,7 +1,9 @@
+"use client";
+export const dynamic = "force-dynamic"; // ⬅️ disables static generation!
+
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 
-// Dynamically import the client component so it's only rendered on the client
 const ClientQuizPage = dynamic(() => import("./ClientQuizPage"), {
   ssr: false,
   loading: () => <div>Loading quiz...</div>,
