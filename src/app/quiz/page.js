@@ -1,5 +1,10 @@
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import ClientQuizPage from "../../Components/ComponentsQuiz/ClientQuizPage";
+
+// ✅ Dynamically import the Client Component (with no SSR)
+const ClientQuizPage = dynamic(() => import("./ClientQuizPage"), {
+  ssr: false,
+});
 
 export default function QuizPage() {
   return (
