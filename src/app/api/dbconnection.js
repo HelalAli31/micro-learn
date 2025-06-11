@@ -6,6 +6,9 @@ if (!MONGODB_URI) {
   throw new Error("Missing MONGODB_URI");
 }
 console.log(MONGODB_URI);
+if (process.env.NODE_ENV !== "production") {
+  console.log("MONGODB_URI =", MONGODB_URI);
+}
 
 // ... (Error handling if MONGODB_URI is missing) ...
 

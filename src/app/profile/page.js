@@ -1,8 +1,10 @@
-'use client';
-
-import React from 'react';
-import ProfilePageContent from '../../Components/ComponentsProfile/ProfilePageContent';
+import { Suspense } from "react";
+import ClientProfilePage from "../../Components/ComponentsProfile/ProfilePageContent";
 
 export default function ProfilePage() {
-  return <ProfilePageContent />;
+  return (
+    <Suspense fallback={<div>Loading profile...</div>}>
+      <ClientProfilePage />
+    </Suspense>
+  );
 }
