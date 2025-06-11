@@ -1,18 +1,12 @@
-"use client";
-export const dynamic = "force-dynamic"; // ⬅️ disables static generation!
+// ❌ no "use client"
+export const dynamic = "force-dynamic"; // ✅ prevent static generation
 
-import { Suspense } from "react";
 import dynamic from "next/dynamic";
 
+// ✅ Dynamically load component only on client
 const ClientQuizPage = dynamic(() => import("./ClientQuizPage"), {
-  ssr: false,
+  ssr: false, // 👈 this is key
   loading: () => <div>Loading quiz...</div>,
 });
 
-export default function QuizPage() {
-  return (
-    <Suspense fallback={<div>Loading quiz...</div>}>
-      <ClientQuizPage />
-    </Suspense>
-  );
-}
+export default ClientQuizPage; // ✅ no Suspense
