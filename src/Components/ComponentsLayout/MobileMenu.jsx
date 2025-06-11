@@ -1,9 +1,10 @@
 // microlearn/Components/ComponentsLayout/MobileMenu.js
-'use client';
-import Link from 'next/link';
+"use client";
+import Link from "next/link";
 // CORRECTED IMPORT PATH
-import { useAuth } from '../../app/context/AuthContext'; // Fix the path
-import { useRouter } from 'next/navigation';
+import { useAuth } from "../../app/context/AuthContext"; // Fix the path
+import { useRouter } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 export default function MobileMenu({ setIsMenuOpen }) {
   const { isLoggedIn, logout, username } = useAuth();
@@ -12,12 +13,14 @@ export default function MobileMenu({ setIsMenuOpen }) {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <div className="mobile-menu md:hidden">
       <nav className="flex flex-col gap-4 py-4">
+        {" "}
+        <ThemeToggle />
         <Link href="/#about" onClick={() => setIsMenuOpen(false)}>
           About
         </Link>
@@ -27,7 +30,6 @@ export default function MobileMenu({ setIsMenuOpen }) {
         <Link href="/#testimonials" onClick={() => setIsMenuOpen(false)}>
           Testimonials
         </Link>
-
         {isLoggedIn ? (
           <>
             <Link href="/search" onClick={() => setIsMenuOpen(false)}>
