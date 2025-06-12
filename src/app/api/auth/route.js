@@ -9,7 +9,7 @@ export async function POST(req) {
   try {
     await dbConnect();
 
-    const { username, password, mode } = await req.json();
+    const { username, password, email, mode } = await req.json();
     console.log("🔐 Incoming login:", username);
 
     if (!username || !password) {
@@ -29,7 +29,7 @@ export async function POST(req) {
         );
       }
 
-      const newUser = await User.create({ username, password });
+      const newUser = await User.create({ username, password, email });
       return new Response(
         JSON.stringify({ message: "Signup successful", user: newUser }),
         { status: 201 }

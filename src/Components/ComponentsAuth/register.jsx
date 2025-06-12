@@ -45,7 +45,12 @@ function shuffle(array) {
 }
 
 const SignupComponent = () => {
-  const [form, setForm] = useState({ username: "", password: "", confirm: "" });
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    confirm: "",
+    email: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [captchaType, setCaptchaType] = useState("arithmetic");
@@ -187,7 +192,10 @@ const SignupComponent = () => {
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-gray-400" />
               <input
+                name="email"
                 type="email"
+                value={form.email}
+                onChange={handleChange}
                 placeholder="you@example.com"
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
                 required
