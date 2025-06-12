@@ -24,7 +24,9 @@ export default function RootLayout({ children }) {
         >
           <AuthProvider>
             <LayoutHeader />
-            <main className="overflow-x-hidden">{children}</main>
+            <main className="overflow-x-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+              {children}
+            </main>
           </AuthProvider>
         </ThemeProvider>
       </body>

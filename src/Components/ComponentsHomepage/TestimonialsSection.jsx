@@ -28,7 +28,7 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="section bg-[#e6eaef] dark:bg-[#1e1e1e] py-12"
+      className="section bg-[#e6eaef] dark:bg-gray-900 py-12"
     >
       <h2 className="section-title text-gray-900 dark:text-white">
         What Our Students Say

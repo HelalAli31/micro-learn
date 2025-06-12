@@ -15,7 +15,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="w-full bg-[#e6eaef] dark:bg-[#1e1e1e] py-16 border-t border-gray-300 dark:border-gray-700 text-center">
+    <section className="w-full bg-[#e6eaef] dark:bg-gray-900 py-16 border-t border-gray-300 dark:border-gray-700 text-center">
       <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
         How It Works
       </h2>

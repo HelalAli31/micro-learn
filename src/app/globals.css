@@ -12,7 +12,7 @@
 }
 
 .dark {
-  --color-bg: #1e1e1e;
+  --color-bg: rgb(17, 24, 39);
   --color-text: #ffffff;
   --color-accent: #66b2ff;
 }

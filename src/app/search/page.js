@@ -35,7 +35,7 @@ export default function SearchPage() {
 
   async function handleSearch(searchQuery) {
     const searchTerm = searchQuery || query;
-    if (!searchTerm || !username) return;
+    if (!searchTerm) return;
 
     setLoading(true);
     setHasSearched(true);

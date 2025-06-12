@@ -2,7 +2,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="section  py-12 bg-[#e6eaef] dark:bg-[#1e1e1e]"
+      className="section py-12 bg-[#e6eaef] dark:bg-gray-900"
     >
       <h2 className="section-title text-gray-900 dark:text-white">
         Why MicroLearn Works
@@ -11,6 +11,7 @@ export default function FeaturesSection() {
         Our platform combines micro-learning, personalized tracking, and AI
         quizzes.
       </p>
+
       <div className="features-grid grid-cols-1 md:grid-cols-3">
         {[
           {
@@ -28,7 +29,7 @@ export default function FeaturesSection() {
         ].map((feat, i) => (
           <div
             key={i}
-            className="feature-card bg-[#bfd1f3] dark:bg-[#2b2b2b] dark:text-white"
+            className="feature-card bg-[#bfd1f3] dark:bg-gray-800 dark:text-white"
           >
             <h3 className="feature-title text-gray-900 dark:text-white">
               {feat.title}
