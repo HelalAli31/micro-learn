@@ -15,7 +15,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
   };
 
   return (
-    <div className="flex items-center justify-between w-full py-1">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-[#202774] dark:#1a202c flex items-center justify-between w-full py-1 h-20 p-2">
       {/* Logo and site title */}
       <Link href="/" className="logo-link flex items-center">
         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center p-0.5 border border-white">

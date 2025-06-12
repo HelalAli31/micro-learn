@@ -36,7 +36,7 @@ export default function ProfilePageContent() {
     return <div className="text-center py-20 text-xl">Loading profile...</div>;
 
   return (
-    <section className="min-h-screen bg-white dark:bg-black text-gray-800 dark:text-white px-4 py-12">
+    <section className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] px-4 py-12">
       <div className="max-w-4xl mx-auto space-y-10">
         <h1 className="text-3xl font-bold text-center">My Profile</h1>
         <ProfileCard user={user} />
