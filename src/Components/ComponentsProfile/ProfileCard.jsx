@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { User, Lock, Eye, EyeOff } from "lucide-react";
+// src/Components/ComponentsProfile/ProfileCard.jsx
+import React from 'react';
+import { User } from 'lucide-react'; // Only User is used here, removed Lock, Eye, EyeOff if not used
 
 const ProfileCard = ({ user }) => {
-
   return (
     <div className="relative flex flex-col sm:flex-row items-start gap-6 bg-blue-100 dark:bg-blue-900 rounded-2xl p-6 shadow-md border border-blue-200 dark:border-blue-700 text-gray-800 dark:text-gray-100">
       {/* Avatar icon */}
@@ -19,21 +19,23 @@ const ProfileCard = ({ user }) => {
           <span>{user.username}</span>
         </div>
 
-        {/* Password */}
+        {/* Edit Profile Button */}
         <div className="flex items-center gap-2">
-          <button class="
-  bg-purple-600 hover:bg-purple-700
-  text-white
-  font-semibold
-  py-2 px-4
-  rounded-md
-  shadow-sm hover:shadow-md
-  transition duration-200 ease-in-out
-  focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75
-">
-  Edit Profile
-</button>
-
+          <button
+            // FIX: Changed 'class' to 'className'
+            className="
+              bg-purple-600 hover:bg-purple-700
+              text-white
+              font-semibold
+              py-2 px-4
+              rounded-md
+              shadow-sm hover:shadow-md
+              transition duration-200 ease-in-out
+              focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75
+            "
+          >
+            Edit Profile
+          </button>
         </div>
       </div>
     </div>

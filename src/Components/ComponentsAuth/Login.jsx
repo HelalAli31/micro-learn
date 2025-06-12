@@ -1,39 +1,54 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../app/context/AuthContext";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+// src/Components/ComponentsAuth/Login.jsx
+'use client';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../app/context/AuthContext'; // Ensure this path is correct
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const LoginComponent = () => {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const router = useRouter();
-  const { login } = useAuth();
+  const { login } = useAuth(); // Assuming useAuth provides a login function
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  form.username = form.username.toLowerCase();
+    e.preventDefault();
+    form.username = form.username.toLowerCase();
 
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(form),
-  });
+    try {
+      // Added try-catch for better error handling
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
 
-  const data = await res.json();
-  if (res.ok) {
-    login(form.username);
-    router.push(`/profile?username=${form.username}`);
-  } else {
-    setError(data.error || "Invalid credentials");
-  }
-};
+      const data = await res.json();
 
+      if (res.ok) {
+        // IMPORTANT: Pass the entire user object to your login context
+        // Your API returns: { message: "Login successful", user: existingUser }
+        // So, data.user contains the full user object including 'role'
+        login(data.user); // <--- CHANGE: Pass the full user object
+
+        if (data.user && data.user.role === 'admin') {
+          router.push('/admin/users'); // Redirect admin to admin page
+        } else {
+          router.push(`/profile?username=${data.user.username}`); // Redirect regular user to their profile
+        }
+      } else {
+        setError(data.error || 'Invalid credentials');
+      }
+    } catch (err) {
+      console.error('Login API call failed:', err);
+      setError('An unexpected error occurred during login.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
@@ -57,7 +72,7 @@ const LoginComponent = () => {
               </span>
               <input
                 type="text"
-                name="username"
+                name="username" // This field is used for both username/email in your API
                 value={form.username}
                 onChange={handleChange}
                 placeholder="you@example.com"
@@ -79,7 +94,7 @@ const LoginComponent = () => {
                 <Lock className="w-4 h-4" />
               </span>
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
@@ -130,7 +145,7 @@ const LoginComponent = () => {
         )}
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-6">
-          Don’t have an account?{" "}
+          Don’t have an account?{' '}
           <a
             href="/signup"
             className="text-purple-600 font-medium hover:underline"

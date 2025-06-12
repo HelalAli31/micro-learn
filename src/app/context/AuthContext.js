@@ -1,55 +1,61 @@
-// app/context/AuthContext.js
-"use client";
+// src/app/context/AuthContext.js
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-// Create the AuthContext
 const AuthContext = createContext(null);
 
-// Custom hook to consume the AuthContext
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Failed to parse user from localStorage', e);
+        localStorage.removeItem('user');
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+        // Add these two properties for convenience in components
+        isLoggedIn: !!user, // true if user is not null, false otherwise
+        username: user ? user.username : null, // Pass username directly
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
-
-// AuthProvider component to manage and provide authentication state
-export function AuthProvider({ children }) {
-  // State for login status, initialized to false (no persistence without localStorage)
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // State for username, initialized to empty string (no persistence without localStorage)
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-      setIsLoggedIn(true);
-    }
-  }, []);
-  // Function to handle user login
-  const login = (userIdentifier) => {
-    setIsLoggedIn(true);
-    setUsername(userIdentifier);
-    localStorage.setItem("username", userIdentifier); //  persist login
-  };
-
-  // Function to handle user logout
-  const logout = () => {
-    setIsLoggedIn(false);
-    setUsername("");
-    localStorage.removeItem("username"); //  clear from storage
-  };
-
-  // The value provided to consumers of this context
-  const value = {
-    isLoggedIn,
-    username,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}

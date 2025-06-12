@@ -1,16 +1,16 @@
 // app/layout.js
-import { Inter } from "next/font/google";
-import "./globals.css";
-import LayoutHeader from "../Components/ComponentsLayout/LayoutHeader";
-import { AuthProvider } from "./context/AuthContext";
-import { ThemeProvider } from "next-themes";
+import { Inter } from 'next/font/google';
+import './globals.css';
+import LayoutHeader from '../Components/ComponentsLayout/LayoutHeader';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from 'next-themes';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: "MicroLearn - Short, Focused Video Lessons",
+  title: 'MicroLearn - Short, Focused Video Lessons',
   description:
-    "Catch up on missed lectures with short, focused 6-minute video lessons.",
+    'Catch up on missed lectures with short, focused 6-minute video lessons.',
 };
 
 export default function RootLayout({ children }) {
@@ -24,7 +24,8 @@ export default function RootLayout({ children }) {
         >
           <AuthProvider>
             <LayoutHeader />
-            <main className="overflow-x-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+            {/* ADDED: pt-20 to push content down, accounting for the fixed Navbar's height */}
+            <main className="overflow-x-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen pt-20">
               {children}
             </main>
           </AuthProvider>
@@ -33,3 +34,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+  

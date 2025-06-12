@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+// src/app/api/models/userSchema.js
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -26,9 +27,15 @@ const userSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  // ✨ UPDATED: Role field with 'user' and 'admin' as enum values
+  role: {
+    type: String,
+    enum: ['user', 'admin'], // Changed 'manager' to 'admin'
+    default: 'user', // Default remains 'user'
+  },
 });
 
 // Prevent model overwrite in dev
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;

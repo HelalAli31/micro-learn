@@ -1,21 +1,23 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import { useAuth } from "../../app/context/AuthContext";
-import { useRouter } from "next/navigation";
-import ThemeToggle from "./ThemeToggle";
+// src/app/Components/ComponentsLayout/Navbar.jsx
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useAuth } from '../../app/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar({ toggleMenu, isMenuOpen }) {
-  const { isLoggedIn, logout, username } = useAuth();
+  // Destructure 'user' along with isLoggedIn, logout, username
+  const { isLoggedIn, logout, username, user } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
     logout();
-    router.push("/");
+    router.push('/');
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-[#202774] dark:#1a202c flex items-center justify-between w-full py-1 h-20 p-2">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-[#202774] dark:bg-[#1a202c] flex items-center justify-between w-full py-1 h-20 p-2">
       {/* Logo and site title */}
       <Link href="/" className="logo-link flex items-center">
         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center p-0.5 border border-white">
@@ -38,7 +40,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
         className="menu-button md:hidden text-white dark:text-gray-100 focus:outline-none text-2xl"
         onClick={toggleMenu}
       >
-        {isMenuOpen ? "✖" : "☰"}
+        {isMenuOpen ? '✖' : '☰'}
       </button>
 
       {/* Nav links + buttons */}
@@ -68,6 +70,15 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
           <ThemeToggle />
           {isLoggedIn ? (
             <>
+              {/* Admin Panel Button - Only visible to admins */}
+              {user && user.role === 'admin' && (
+                <Link
+                  href="/admin/users"
+                  className="px-4 py-2 border border-blue-500 rounded-lg text-blue-300 font-semibold text-sm hover:bg-blue-500 hover:text-white transition-colors duration-200"
+                >
+                  Admin Panel
+                </Link>
+              )}
               <Link
                 href={`/search?username=${username}`}
                 className="px-4 py-2 border border-white dark:border-gray-300 rounded-lg text-white dark:text-gray-100 font-semibold text-sm hover:bg-white hover:text-[#202774] dark:hover:bg-gray-300 dark:hover:text-[#202774] transition-colors duration-200"
