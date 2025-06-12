@@ -17,8 +17,7 @@ export default function HomePage() {
       <HowItWorks />
       <AboutSection />
       <TestimonialsSection />
-      <TestimonialsSection />
+      <Footer />
     </>
   );
 }
-//dbdfbb
