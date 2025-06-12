@@ -12,29 +12,44 @@ export async function GET(request) {
   const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
   const maxResults = 6;
 
-  // Call YouTube Search API
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
+  // Step 1: Call Search API
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
     query
   )}&maxResults=${maxResults}&type=video&videoDuration=short&key=${YOUTUBE_API_KEY}`;
 
   try {
-    const res = await fetch(url);
-    const data = await res.json();
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
 
-    // Map only the info you want to send to frontend
-    const videos = (data.items || []).map((item) => {
+    const videoItems = searchData.items || [];
+    const videoIds = videoItems.map(item => item.id.videoId).join(',');
+
+    // Step 2: Call Videos API to get view counts
+    const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`;
+    const statsRes = await fetch(statsUrl);
+    const statsData = await statsRes.json();
+
+    // Map videoId to viewCount
+    const statsMap = {};
+    statsData.items.forEach(item => {
+      statsMap[item.id] = item.statistics.viewCount;
+    });
+
+    // Merge both
+    const videos = videoItems.map(item => {
       const videoId = item.id.videoId;
-      const url = `https://www.youtube.com/watch?v=${videoId}`;
       return {
         id: videoId,
         title: item.snippet.title,
-        url: url,
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        views: statsMap[videoId] || '0',
       };
     });
 
     return new Response(JSON.stringify({ videos }), {
       headers: { 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     console.error('YouTube API error:', error);
     return new Response(JSON.stringify({ error: 'Failed to fetch videos' }), {

@@ -64,8 +64,11 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
               <span className="mx-2">•</span>
               <Eye className="w-4 h-4 mr-2" />
               <span>YouTube</span>
+              <span className="mx-2">•</span>
+              <Eye className="w-4 h-4 mr-2" />
+              <span>{Number(selectedVideo.views).toLocaleString()} views</span>
             </div>
-
+            
             {username === "guest" && (
               <Link
                 href="/signup"

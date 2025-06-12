@@ -35,7 +35,7 @@ export default function SearchPage() {
 
   async function handleSearch(searchQuery) {
     const searchTerm = searchQuery || query;
-    if (!searchTerm) return;
+    if (!searchTerm || !username) return;
 
     setLoading(true);
     setHasSearched(true);
@@ -59,6 +59,7 @@ export default function SearchPage() {
           id: v.id,
           title: v.title,
           url: v.url,
+          views: v.views,
         }))
       );
 
@@ -136,7 +137,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 mt-5">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <SearchHeader
         query={query}
         setQuery={setQuery}
