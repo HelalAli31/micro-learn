@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="hero-section bg-[var(--color-bg)] text-[var(--color-text)]">
+    <section className="hero-section dark:bg-gray-900 text-[var(--color-text)]">
       <div className="hero-content">
         <h1 className="hero-title">
           Learn Faster with <span className="text-accent">Micro-Learning</span>

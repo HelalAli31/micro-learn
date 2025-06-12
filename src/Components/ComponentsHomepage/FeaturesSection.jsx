@@ -1,9 +1,6 @@
 export default function FeaturesSection() {
   return (
-    <section
-      id="features"
-      className="section py-12 bg-[#e6eaef] dark:bg-gray-900"
-    >
+    <section id="features" className="section py-12  dark:bg-gray-900">
       <h2 className="section-title text-gray-900 dark:text-white">
         Why MicroLearn Works
       </h2>
