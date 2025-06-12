@@ -9,7 +9,15 @@ export async function POST(req) {
     console.log("!! Incoming login:", username);
     console.log("🔐 Incoming Password:", password);
 
-    const existingUser = await User.findOne({ username });
+    const identifier = username; // Rename for clarity, as it could be username OR email
+
+    const existingUser = await User.findOne({
+      $or: [
+        { username: identifier },
+        { email: identifier }
+      ]
+    });
+    
     console.log("👤 Found user:", existingUser);
 
     if (!existingUser || existingUser.password !== password) {

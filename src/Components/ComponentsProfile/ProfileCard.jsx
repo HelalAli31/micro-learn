@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 
 const ProfileCard = ({ user }) => {
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="relative flex flex-col sm:flex-row items-start gap-6 bg-blue-100 dark:bg-blue-900 rounded-2xl p-6 shadow-md border border-blue-200 dark:border-blue-700 text-gray-800 dark:text-gray-100">
@@ -22,15 +21,19 @@ const ProfileCard = ({ user }) => {
 
         {/* Password */}
         <div className="flex items-center gap-2">
-          <Lock className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          <span className="font-medium">Password:</span>
-          <span>{showPassword ? user.password : "••••••••"}</span>
-          <button
-            onClick={() => setShowPassword(!showPassword)}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+          <button class="
+  bg-purple-600 hover:bg-purple-700
+  text-white
+  font-semibold
+  py-2 px-4
+  rounded-md
+  shadow-sm hover:shadow-md
+  transition duration-200 ease-in-out
+  focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75
+">
+  Edit Profile
+</button>
+
         </div>
       </div>
     </div>
