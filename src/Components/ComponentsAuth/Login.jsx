@@ -16,22 +16,24 @@ const LoginComponent = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    form.username = form.username.toLowerCase();
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, mode: "login" }),
-    });
+  e.preventDefault();
+  form.username = form.username.toLowerCase();
 
-    const data = await res.json();
-    if (res.ok) {
-      login(form.username);
-      router.push(`/profile?username=${form.username}`);
-    } else {
-      setError(data.error || "Invalid credentials");
-    }
-  };
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(form),
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    login(form.username);
+    router.push(`/profile?username=${form.username}`);
+  } else {
+    setError(data.error || "Invalid credentials");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">

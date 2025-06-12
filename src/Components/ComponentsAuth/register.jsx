@@ -116,38 +116,39 @@ const SignupComponent = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
+  e.preventDefault();
+  setError("");
+  setMessage("");
 
-    if (!validateCaptcha()) {
-      setFailedAttempts((prev) => prev + 1);
-      setError("❌ CAPTCHA failed. Try again.");
-      if (failedAttempts + 1 >= maxAttempts)
-        setError("❌ Too many incorrect CAPTCHA attempts. Try later.");
-      return;
-    }
+  if (!validateCaptcha()) {
+    setFailedAttempts((prev) => prev + 1);
+    setError("❌ CAPTCHA failed. Try again.");
+    if (failedAttempts + 1 >= maxAttempts)
+      setError("❌ Too many incorrect CAPTCHA attempts. Try later.");
+    return;
+  }
 
-    form.username = form.username.toLowerCase();
+  form.username = form.username.toLowerCase();
 
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: form.username,
-        password: form.password,
-        mode: "signup",
-      }),
-    });
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: form.username,
+      password: form.password,
+      email: form.email,
+    }),
+  });
 
-    const data = await res.json();
-    if (res.ok) {
-      setMessage("✅ Signup successful!");
-      setForm({ username: "", password: "", confirm: "" });
-    } else {
-      setMessage(`❌ ${data.error}`);
-    }
-  };
+  const data = await res.json();
+  if (res.ok) {
+    setMessage("✅ Signup successful!");
+    setForm({ username: "", password: "", confirm: "", email: "" });
+  } else {
+    setMessage(`❌ ${data.error}`);
+  }
+};
+
 
   useEffect(() => {
     captchaType === "arithmetic"
