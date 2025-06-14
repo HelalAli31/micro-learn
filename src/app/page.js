@@ -7,7 +7,7 @@ import HowItWorks from '../Components/ComponentsHomepage/HowItWorks';
 import AboutSection from '../Components/ComponentsHomepage/AboutSection';
 import Footer from '../Components/ComponentsHomepage/Footer';
 import TestimonialsSection from '../Components/ComponentsHomepage/TestimonialsSection';
-
+//add try
 export default function HomePage() {
   return (
     <>
