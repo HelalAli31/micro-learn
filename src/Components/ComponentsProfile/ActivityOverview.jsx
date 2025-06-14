@@ -9,6 +9,7 @@ const ActivityOverview = ({ user }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -47,185 +48,237 @@ const ActivityOverview = ({ user }) => {
         return null;
     }
   };
+  
+  // Group searchHistory items by category
+const categorizedSearches = {};
+(user.searchHistory || []).forEach((item) => {
+  const category = item.category || "Other";
+  if (!categorizedSearches[category]) {
+    categorizedSearches[category] = [];
+  }
+  categorizedSearches[category].push(item);
+});
+
 
   const renderList = (type) => {
-    const items = user[`${type}History`] || [];
+  const items = user[`${type}History`] || [];
 
-    return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-900 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-y-auto p-6 rounded-xl shadow-xl relative border border-gray-200 custom-scroll text-gray-800 dark:text-gray-100">
-          <button
-            className="absolute top-3 right-3 text-gray-500 hover:text-red-500 dark:text-gray-400"
-            onClick={() => {
-              setActiveModal(null);
-              setActiveQuestionIndex(0);
-              setActiveQuiz(null);
-              router.replace("/profile");
-            }}
-          >
-            <X />
-          </button>
-          <h2 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300 flex items-center">
-            {getIcon(type)} {type} History
-          </h2>
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-y-auto p-6 rounded-xl shadow-xl relative border border-gray-200 custom-scroll text-gray-800 dark:text-gray-100">
+        <button
+          className="absolute top-3 right-3 text-gray-500 hover:text-red-500 dark:text-gray-400"
+          onClick={() => {
+            setActiveModal(null);
+            setActiveQuestionIndex(0);
+            setActiveQuiz(null);
+            router.replace("/profile");
+          }}
+        >
+          <X />
+        </button>
+        <h2 className="text-xl font-bold mb-4 text-blue-700 dark:text-blue-300 flex items-center">
+          {getIcon(type)} {type} History
+        </h2>
 
-          {items.length > 0 ? (
-            type === "quiz" && activeQuiz ? (
-              <div>
-                <div className="text-sm text-gray-500 mb-1 dark:text-gray-400">
-                  📅 {new Date(activeQuiz.dateTaken).toLocaleString()}
+        {items.length > 0 ? (
+          type === "quiz" && activeQuiz ? (
+            // ✅ Quiz detail view
+            <div>
+              <div className="text-sm text-gray-500 mb-1 dark:text-gray-400">
+                📅 {new Date(activeQuiz.dateTaken).toLocaleString()}
+              </div>
+              <div className="text-green-700 dark:text-green-400 font-medium mb-3">
+                ✅ Score: {activeQuiz.score} / {activeQuiz.totalQuestions}
+              </div>
+
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded shadow">
+                <div className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                  Q{activeQuestionIndex + 1}:{" "}
+                  {activeQuiz.fullQuizContent[activeQuestionIndex].question}
                 </div>
-                <div className="text-green-700 dark:text-green-400 font-medium mb-3">
-                  ✅ Score: {activeQuiz.score} / {activeQuiz.totalQuestions}
-                </div>
-
-                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded shadow">
-                  <div className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                    Q{activeQuestionIndex + 1}:{" "}
-                    {activeQuiz.fullQuizContent[activeQuestionIndex].question}
-                  </div>
-                  <ul className="list-disc pl-6 space-y-1">
-                    {activeQuiz.fullQuizContent[
-                      activeQuestionIndex
-                    ].options.map((opt, j) => (
-                      <li
-                        key={j}
-                        className={
-                          j ===
-                          activeQuiz.fullQuizContent[activeQuestionIndex]
-                            .correctIndex
-                            ? "text-green-700 dark:text-green-400 font-semibold"
-                            : j === activeQuiz.userAnswers[activeQuestionIndex]
-                              ? "text-red-500"
-                              : "text-gray-700 dark:text-gray-300"
-                        }
-                      >
-                        {opt}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="text-sm mt-2">
-                    Your Answer:{" "}
-                    <span
+                <ul className="list-disc pl-6 space-y-1">
+                  {activeQuiz.fullQuizContent[
+                    activeQuestionIndex
+                  ].options.map((opt, j) => (
+                    <li
+                      key={j}
                       className={
-                        activeQuiz.userAnswers[activeQuestionIndex] ===
+                        j ===
                         activeQuiz.fullQuizContent[activeQuestionIndex]
                           .correctIndex
-                          ? "text-green-700 dark:text-green-400"
-                          : "text-red-500"
+                          ? "text-green-700 dark:text-green-400 font-semibold"
+                          : j === activeQuiz.userAnswers[activeQuestionIndex]
+                          ? "text-red-500"
+                          : "text-gray-700 dark:text-gray-300"
                       }
                     >
-                      {
-                        activeQuiz.fullQuizContent[activeQuestionIndex].options[
-                          activeQuiz.userAnswers[activeQuestionIndex]
-                        ]
-                      }
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center mt-4">
-                    <button
-                      onClick={() =>
-                        setActiveQuestionIndex((prev) => Math.max(prev - 1, 0))
-                      }
-                      disabled={activeQuestionIndex === 0}
-                      className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
-                    >
-                      ← Prev
-                    </button>
-                    <button
-                      onClick={() =>
-                        setActiveQuestionIndex((prev) =>
-                          Math.min(
-                            prev + 1,
-                            activeQuiz.fullQuizContent.length - 1
-                          )
-                        )
-                      }
-                      disabled={
-                        activeQuestionIndex ===
-                        activeQuiz.fullQuizContent.length - 1
-                      }
-                      className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
-                    >
-                      Next →
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={handleBackToQuizList}
-                    className="mt-4 text-sm text-blue-700 dark:text-blue-400 underline hover:text-blue-900"
+                      {opt}
+                    </li>
+                  ))}
+                </ul>
+                <div className="text-sm mt-2">
+                  Your Answer:{" "}
+                  <span
+                    className={
+                      activeQuiz.userAnswers[activeQuestionIndex] ===
+                      activeQuiz.fullQuizContent[activeQuestionIndex]
+                        .correctIndex
+                        ? "text-green-700 dark:text-green-400"
+                        : "text-red-500"
+                    }
                   >
-                    ← Back to all quizzes
+                    {
+                      activeQuiz.fullQuizContent[activeQuestionIndex].options[
+                        activeQuiz.userAnswers[activeQuestionIndex]
+                      ]
+                    }
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={() =>
+                      setActiveQuestionIndex((prev) => Math.max(prev - 1, 0))
+                    }
+                    disabled={activeQuestionIndex === 0}
+                    className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
+                  >
+                    ← Prev
+                  </button>
+                  <button
+                    onClick={() =>
+                      setActiveQuestionIndex((prev) =>
+                        Math.min(
+                          prev + 1,
+                          activeQuiz.fullQuizContent.length - 1
+                        )
+                      )
+                    }
+                    disabled={
+                      activeQuestionIndex ===
+                      activeQuiz.fullQuizContent.length - 1
+                    }
+                    className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
+                  >
+                    Next →
                   </button>
                 </div>
-              </div>
-            ) : (
-              <ul className="list-disc list-inside space-y-2 pr-2">
-                {items.map((item, i) => {
-                  if (
-                    type === "video" &&
-                    (typeof item !== "string" || !item.startsWith("http"))
-                  )
-                    return null;
 
-                  return (
-                    <li
-                      key={i}
-                      className="text-gray-700 dark:text-gray-300 mb-2"
+                <button
+                  onClick={handleBackToQuizList}
+                  className="mt-4 text-sm text-blue-700 dark:text-blue-400 underline hover:text-blue-900"
+                >
+                  ← Back to all quizzes
+                </button>
+              </div>
+            </div>
+          ) : type === "search" ? (
+            // ✅ New categorized search history view
+            <>
+              {Object.keys(categorizedSearches).length > 1 && (
+                <div className="mb-4 flex flex-wrap gap-2 justify-center">
+                  {Object.keys(categorizedSearches).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`text-sm px-3 py-1 rounded-full border ${
+                        activeCategory === cat
+                          ? "bg-blue-600 text-white"
+                          : "bg-white dark:bg-gray-800 text-blue-600 border-blue-600"
+                      }`}
                     >
-                      {type === "video" ? (
-                        <button
-                          onClick={() => setSelectedVideo(item)}
-                          className="text-blue-600 underline hover:text-blue-800"
-                        >
-                          🎥 {item}
-                        </button>
-                      ) : type === "quiz" && item.dateTaken ? (
-                        <span
-                          className="text-blue-700 dark:text-blue-400 underline hover:text-blue-900 cursor-pointer"
-                          onClick={() => {
-                            try {
-                              const quizDate = new Date(
-                                item.dateTaken
-                              ).toISOString();
-                              setActiveQuiz(item);
-                              setActiveQuestionIndex(0);
-                              const params = new URLSearchParams(
-                                searchParams.toString()
-                              );
-                              params.set("quizDate", quizDate);
-                              router.replace("/profile?" + params.toString());
-                            } catch (e) {
-                              console.warn(
-                                "Invalid date in quiz entry",
-                                item.dateTaken
-                              );
-                            }
-                          }}
-                        >
-                          📘 View Quiz from{" "}
-                          {new Date(item.dateTaken).toLocaleString()}
-                        </span>
-                      ) : (
-                        <span className="text-gray-700 dark:text-gray-300">
-                          🔍 {String(item)}
-                        </span>
-                      )}
+                      {cat}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setActiveCategory(null)}
+                    className="text-sm px-3 py-1 rounded-full border bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  >
+                    All
+                  </button>
+                </div>
+              )}
+
+              <ul className="list-disc list-inside space-y-2 pr-2">
+                {(activeCategory
+                  ? categorizedSearches[activeCategory] || []
+                  : user.searchHistory || []
+                )
+                  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                  .map((item, i) => (
+                    <li key={i} className="text-sm text-gray-700 dark:text-gray-300">
+                      🔍 <span className="text-blue-600">{item.value}</span>
+                      <span className="ml-2 text-xs text-gray-500">
+                        ({new Date(item.timestamp).toLocaleString()})
+                      </span>
                     </li>
-                  );
-                })}
+                  ))}
               </ul>
-            )
+            </>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              No data available.
-            </p>
-          )}
-        </div>
+            // ✅ Default rendering for video and quiz links
+            <ul className="list-disc list-inside space-y-2 pr-2">
+              {items.map((item, i) => {
+                if (
+                  type === "video" &&
+                  (typeof item !== "string" || !item.startsWith("http"))
+                )
+                  return null;
+
+                return (
+                  <li
+                    key={i}
+                    className="text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    {type === "video" ? (
+                      <button
+                        onClick={() => setSelectedVideo(item)}
+                        className="text-blue-600 underline hover:text-blue-800"
+                      >
+                        🎥 {item}
+                      </button>
+                    ) : type === "quiz" && item.dateTaken ? (
+                      <span
+                        className="text-blue-700 dark:text-blue-400 underline hover:text-blue-900 cursor-pointer"
+                        onClick={() => {
+                          try {
+                            const quizDate = new Date(
+                              item.dateTaken
+                            ).toISOString();
+                            setActiveQuiz(item);
+                            setActiveQuestionIndex(0);
+                            const params = new URLSearchParams(
+                              searchParams.toString()
+                            );
+                            params.set("quizDate", quizDate);
+                            router.replace("/profile?" + params.toString());
+                          } catch (e) {
+                            console.warn(
+                              "Invalid date in quiz entry",
+                              item.dateTaken
+                            );
+                          }
+                        }}
+                      >
+                        📘 View Quiz from{" "}
+                        {new Date(item.dateTaken).toLocaleString()}
+                      </span>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          )
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            No data available.
+          </p>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   return (
     <>

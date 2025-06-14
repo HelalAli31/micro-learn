@@ -15,10 +15,13 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
   },
-  searchHistory: {
-    type: Array,
-    default: [],
-  },
+ searchHistory: [
+  {
+    value: { type: String, required: true },
+    category: { type: String, default: 'Other' },
+    timestamp: { type: String, required: true },
+  }
+],
   videoHistory: {
     type: Array,
     default: [],

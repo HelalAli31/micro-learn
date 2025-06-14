@@ -65,6 +65,44 @@ ${explanation}`;
         "No summary available.";
     }
 
+    // Step 0: Determine the Category using Gemini
+let category = "Other";
+const categoryPrompt = `Classify the following topic into one of these categories:
+Science, Math, History, Technology, Entertainment, Literature, Health, Education, Business, Sports, Politics, Philosophy, Art & Design, Other.
+
+Return ONLY the category name (nothing else).
+
+Query:
+${query}`;
+
+try {
+  const categoryResponse = await fetch(geminiApiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: categoryPrompt }] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 30 },
+    }),
+  });
+
+  const categoryData = await categoryResponse.json();
+  category =
+    categoryData.candidates?.[0]?.content?.parts?.[0]?.text.trim() || "Other";
+
+  const allowedCategories = [
+    "Science", "Math", "History", "Technology", "Entertainment",
+    "Literature", "Health", "Education", "Business", "Sports",
+    "Politics", "Philosophy", "Art & Design", "Other"
+  ];
+  if (!allowedCategories.includes(category)) {
+    category = "Other";
+  }
+} catch (err) {
+  console.error("Gemini category classification error:", err);
+  category = "Other";
+}
+
+
     // --- Step 3: Generate Four Quiz Questions based on the Explanation ---
     let quiz = [];
     if (explanation !== "No explanation available.") {
@@ -152,7 +190,8 @@ ${explanation}`;
     }
 
     // --- Send the Explanation, Summary, and Quiz to the Frontend ---
-    return new Response(JSON.stringify({ explanation, summary, quiz }), {
+    return new Response(JSON.stringify({ explanation, summary, quiz, category }), {
+
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {

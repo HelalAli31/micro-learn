@@ -53,6 +53,7 @@ export default function SearchPage() {
         `/api/explanation?query=${encodeURIComponent(searchTerm)}`
       );
       const explanationData = await explanationRes.json();
+      const { explanation, summary, quiz, category } = explanationData;
 
       setVideos(
         (videosData.videos || []).map((v) => ({
@@ -62,7 +63,7 @@ export default function SearchPage() {
           views: v.views,
         }))
       );
-
+       
       setExplanation({
         text: explanationData.explanation || "",
         query: explanationData.query || searchTerm,
@@ -71,14 +72,20 @@ export default function SearchPage() {
 
       setQuiz(explanationData.quiz || []);
 
-      await fetch("/api/add/searchHistory", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username,
-          value: searchTerm,
-        }),
-      });
+     await fetch("/api/add/searchHistory", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    username: username,
+    value: {
+      value: searchTerm,
+      category: category || "Other",
+      timestamp: new Date().toISOString(),
+    },
+  }),
+});
+
+
     } catch (error) {
       console.error("Search error:", error);
       setExplanation(null);
