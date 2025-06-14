@@ -22,14 +22,25 @@ const userSchema = new mongoose.Schema({
     timestamp: { type: String, required: true },
   }
 ],
-  videoHistory: {
-    type: Array,
-    default: [],
-  },
-  quizHistory: {
-    type: Array,
-    default: [],
-  },
+  videoHistory: [
+    {
+        value:{type:String,required: true},
+        category: { type: String, default: 'Other' },
+        title: {type:String,required: true},
+        timestamp: { type: String, required: true },
+    }
+  ],
+quizHistory: [
+  {
+    score: { type: Number, required: true },
+    totalQuestions: { type: Number, required: true },
+    fullQuizContent: { type: Array, required: true },
+    userAnswers: { type: Array, required: true },
+    dateTaken: { type: String, required: true },
+    category: { type: String, default: 'Other' },
+  }
+],
+
   // ✨ UPDATED: Role field with 'user' and 'admin' as enum values
   role: {
     type: String,

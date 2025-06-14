@@ -22,6 +22,7 @@ export default function SearchPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
+  const [category, setCategory] = useState("Other");
 
   const router = useRouter();
 
@@ -44,23 +45,26 @@ export default function SearchPage() {
     setQuiz([]);
 
     try {
-      const videosRes = await fetch(
-        `/api/videos?query=${encodeURIComponent(searchTerm)}`
-      );
-      const videosData = await videosRes.json();
+      
 
       const explanationRes = await fetch(
         `/api/explanation?query=${encodeURIComponent(searchTerm)}`
       );
       const explanationData = await explanationRes.json();
       const { explanation, summary, quiz, category } = explanationData;
+      setCategory(category || "Other");
 
+      const videosRes = await fetch(
+        `/api/videos?query=${encodeURIComponent(searchTerm)}`
+      );
+      const videosData = await videosRes.json();
       setVideos(
         (videosData.videos || []).map((v) => ({
           id: v.id,
           title: v.title,
           url: v.url,
           views: v.views,
+          catagory: category
         }))
       );
        
@@ -110,7 +114,12 @@ export default function SearchPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             username: username,
+            value: {
             value: video.url,
+            title:video.title,
+            timestamp: new Date().toISOString(),
+            category: video.catagory || "Other"
+            },
           }),
         });
         console.log("Video history saved successfully!");
@@ -131,7 +140,8 @@ export default function SearchPage() {
       try {
         const quizJsonString = JSON.stringify(quiz);
         const encodedQuiz = encodeURIComponent(quizJsonString);
-        router.push(`/quiz?quizData=${encodedQuiz}&username=${username}`);
+        router.push(`/quiz?quizData=${encodedQuiz}&username=${username}&category=${encodeURIComponent(category)}`);
+
       } catch (error) {
         console.error("Error encoding quiz data for URL:", error);
         alert("Could not generate quiz link. Please try again.");

@@ -9,6 +9,7 @@ import Footer from '../Components/ComponentsHomepage/Footer';
 import TestimonialsSection from '../Components/ComponentsHomepage/TestimonialsSection';
 //add try//ededd
 //waide
+
 export default function HomePage() {
   return (
     <>
@@ -22,3 +23,7 @@ export default function HomePage() {
     </>
   );
 }
+
+
+
+

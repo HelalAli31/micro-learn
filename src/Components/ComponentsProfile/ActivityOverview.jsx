@@ -59,19 +59,39 @@ const categorizedSearches = {};
   categorizedSearches[category].push(item);
 });
 
+// Group videoHistory items by category
+const categorizedVideos = {};
+(user.videoHistory || []).forEach((item) => {
+  const category = item.category || "Other";
+  if (!categorizedVideos[category]) {
+    categorizedVideos[category] = [];
+  }
+  categorizedVideos[category].push(item);
+});
+
+const categorizedQuizzes = {};
+(user.quizHistory || []).forEach((item) => {
+  const category = item.category || "Other";
+  if (!categorizedQuizzes[category]) {
+    categorizedQuizzes[category] = [];
+  }
+  categorizedQuizzes[category].push(item);
+});
+
 
   const renderList = (type) => {
   const items = user[`${type}History`] || [];
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-y-auto p-6 rounded-xl shadow-xl relative border border-gray-200 custom-scroll text-gray-800 dark:text-gray-100">
+      <div className="bg-white dark:bg-gray-900 dark:border-gray-700 w-[900px] max-h-[80vh] overflow-y-auto p-6 rounded-xl shadow-xl relative border border-gray-200 custom-scroll text-gray-800 dark:text-gray-100">
         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-red-500 dark:text-gray-400"
           onClick={() => {
             setActiveModal(null);
             setActiveQuestionIndex(0);
             setActiveQuiz(null);
+            setActiveCategory(null)
             router.replace("/profile");
           }}
         >
@@ -98,15 +118,11 @@ const categorizedSearches = {};
                   {activeQuiz.fullQuizContent[activeQuestionIndex].question}
                 </div>
                 <ul className="list-disc pl-6 space-y-1">
-                  {activeQuiz.fullQuizContent[
-                    activeQuestionIndex
-                  ].options.map((opt, j) => (
+                  {activeQuiz.fullQuizContent[activeQuestionIndex].options.map((opt, j) => (
                     <li
                       key={j}
                       className={
-                        j ===
-                        activeQuiz.fullQuizContent[activeQuestionIndex]
-                          .correctIndex
+                        j === activeQuiz.fullQuizContent[activeQuestionIndex].correctIndex
                           ? "text-green-700 dark:text-green-400 font-semibold"
                           : j === activeQuiz.userAnswers[activeQuestionIndex]
                           ? "text-red-500"
@@ -122,8 +138,7 @@ const categorizedSearches = {};
                   <span
                     className={
                       activeQuiz.userAnswers[activeQuestionIndex] ===
-                      activeQuiz.fullQuizContent[activeQuestionIndex]
-                        .correctIndex
+                      activeQuiz.fullQuizContent[activeQuestionIndex].correctIndex
                         ? "text-green-700 dark:text-green-400"
                         : "text-red-500"
                     }
@@ -138,9 +153,7 @@ const categorizedSearches = {};
 
                 <div className="flex justify-between items-center mt-4">
                   <button
-                    onClick={() =>
-                      setActiveQuestionIndex((prev) => Math.max(prev - 1, 0))
-                    }
+                    onClick={() => setActiveQuestionIndex((prev) => Math.max(prev - 1, 0))}
                     disabled={activeQuestionIndex === 0}
                     className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
                   >
@@ -149,16 +162,10 @@ const categorizedSearches = {};
                   <button
                     onClick={() =>
                       setActiveQuestionIndex((prev) =>
-                        Math.min(
-                          prev + 1,
-                          activeQuiz.fullQuizContent.length - 1
-                        )
+                        Math.min(prev + 1, activeQuiz.fullQuizContent.length - 1)
                       )
                     }
-                    disabled={
-                      activeQuestionIndex ===
-                      activeQuiz.fullQuizContent.length - 1
-                    }
+                    disabled={activeQuestionIndex === activeQuiz.fullQuizContent.length - 1}
                     className="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded disabled:opacity-50"
                   >
                     Next →
@@ -174,7 +181,7 @@ const categorizedSearches = {};
               </div>
             </div>
           ) : type === "search" ? (
-            // ✅ New categorized search history view
+            // ✅ Search history with category filters
             <>
               {Object.keys(categorizedSearches).length > 1 && (
                 <div className="mb-4 flex flex-wrap gap-2 justify-center">
@@ -216,69 +223,96 @@ const categorizedSearches = {};
                   ))}
               </ul>
             </>
+          ) : type === "video" ? (
+  // ✅ Video history with categories
+  <>
+    {Object.keys(categorizedVideos).length > 1 && (
+      <div className="mb-4 flex flex-wrap gap-2 justify-center">
+        {Object.keys(categorizedVideos).map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`text-sm px-3 py-1 rounded-full border ${
+              activeCategory === cat
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-gray-800 text-blue-600 border-blue-600"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+        <button
+          onClick={() => setActiveCategory(null)}
+          className="text-sm px-3 py-1 rounded-full border bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+        >
+          All
+        </button>
+      </div>
+    )}
+
+    <ul className="list-disc list-inside space-y-2 pr-2">
+      {(activeCategory
+        ? categorizedVideos[activeCategory] || []
+        : Object.values(categorizedVideos).flat()
+      )
+        .filter((v) => typeof v?.value === "string" && v.value.startsWith("http"))
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .map((video, i) => (
+          <li key={i} className="text-sm text-gray-700 dark:text-gray-300">
+            <button
+              onClick={() => setSelectedVideo(video.value)}
+              className="text-blue-600 underline hover:text-blue-800"
+            >
+              🎥 {video.title || "Video"}
+            </button>
+            <span className="ml-2 text-xs text-gray-500">
+              ({new Date(video.timestamp).toLocaleString()})
+            </span>
+          </li>
+        ))}
+    </ul>
+  </>
+
           ) : (
-            // ✅ Default rendering for video and quiz links
+            // ✅ Fallback (quiz list view)
             <ul className="list-disc list-inside space-y-2 pr-2">
               {items.map((item, i) => {
-                if (
-                  type === "video" &&
-                  (typeof item !== "string" || !item.startsWith("http"))
-                )
-                  return null;
-
-                return (
-                  <li
-                    key={i}
-                    className="text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    {type === "video" ? (
-                      <button
-                        onClick={() => setSelectedVideo(item)}
-                        className="text-blue-600 underline hover:text-blue-800"
-                      >
-                        🎥 {item}
-                      </button>
-                    ) : type === "quiz" && item.dateTaken ? (
+                if (type === "quiz" && item.dateTaken) {
+                  return (
+                    <li key={i} className="text-gray-700 dark:text-gray-300 mb-2">
                       <span
                         className="text-blue-700 dark:text-blue-400 underline hover:text-blue-900 cursor-pointer"
                         onClick={() => {
                           try {
-                            const quizDate = new Date(
-                              item.dateTaken
-                            ).toISOString();
+                            const quizDate = new Date(item.dateTaken).toISOString();
                             setActiveQuiz(item);
                             setActiveQuestionIndex(0);
-                            const params = new URLSearchParams(
-                              searchParams.toString()
-                            );
+                            const params = new URLSearchParams(searchParams.toString());
                             params.set("quizDate", quizDate);
                             router.replace("/profile?" + params.toString());
                           } catch (e) {
-                            console.warn(
-                              "Invalid date in quiz entry",
-                              item.dateTaken
-                            );
+                            console.warn("Invalid date in quiz entry", item.dateTaken);
                           }
                         }}
                       >
-                        📘 View Quiz from{" "}
-                        {new Date(item.dateTaken).toLocaleString()}
+                        📘 View Quiz from {new Date(item.dateTaken).toLocaleString()}
                       </span>
-                    ) : null}
-                  </li>
-                );
+                    </li>
+                  );
+                } else {
+                  return null;
+                }
               })}
             </ul>
           )
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            No data available.
-          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">No data available.</p>
         )}
       </div>
     </div>
   );
 };
+
 
   return (
     <>
@@ -304,9 +338,7 @@ const categorizedSearches = {};
         <div className="flex flex-col items-center bg-blue-50 dark:bg-blue-900 border border-blue-100 dark:border-blue-800 p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow">
           <Play className="w-6 h-6 text-blue-600 mb-2" />
           <p className="text-lg font-semibold text-blue-700 dark:text-blue-300">
-            {user.videoHistory?.filter(
-              (v) => typeof v === "string" && v.startsWith("http")
-            ).length || 0}
+            {user.videoHistory?.length || 0}
           </p>
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
             Videos Watched

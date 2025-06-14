@@ -19,7 +19,7 @@ export default function ClientQuizPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
-
+  const category=searchParams.get("category")
   useEffect(() => {
     try {
       const quizDataParam = searchParams.get("quizData");
@@ -71,20 +71,21 @@ export default function ClientQuizPage() {
         setShowResults(true);
         const score = calculateScore();
 
-        const history = {
-          score,
-          totalQuestions: quiz.length,
-          fullQuizContent: quiz,
-          userAnswers: selectedAnswers,
-          dateTaken: new Date().toISOString(),
-        };
+        
 
         if (username) {
           try {
             const res = await fetch("/api/add/quizHistory", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username, value: history }),
+              body: JSON.stringify({ username, value:{
+                score,
+               totalQuestions: quiz.length,
+               fullQuizContent: quiz,
+               userAnswers: selectedAnswers,
+               dateTaken: new Date().toISOString(),
+               category:category
+              } }),
             });
 
             if (!res.ok) {
