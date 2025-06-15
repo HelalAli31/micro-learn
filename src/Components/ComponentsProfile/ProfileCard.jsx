@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff } from "lucide-react"; // Retaining all lucide-react imports from your code
-import UpdatePage from "./UpdatePage"; // Retaining this import from your code
+import UpdatePage from "./updatePage"; // Retaining this import from your code
 
 const ProfileCard = ({ user, onUserUpdate }) => { // Retaining onUserUpdate prop from your code
 
