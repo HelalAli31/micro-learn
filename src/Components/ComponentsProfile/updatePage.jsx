@@ -1,11 +1,15 @@
+"use client";
+
 import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext"; // ✅ import context
 
 function UpdatePage({ onClose, onUserUpdated }) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialUsername = searchParams.get("username") || "";
+  const { user, login } = useAuth(); // ✅ access auth context
 
+  const initialUsername = user?.username || searchParams.get("username") || "";
   const [username] = useState(initialUsername);
   const [newusername, setNewUsername] = useState('');
   const [oldPassword, setOldPassword] = useState('');
@@ -42,15 +46,19 @@ function UpdatePage({ onClose, onUserUpdated }) {
       const data = await response.json();
 
       if (response.ok) {
-        const finalUsername = trimmedNewUsername || username;
+        // ✅ Update global AuthContext with latest user data
+        login(data.user);
+
+        // ✅ Call optional parent update logic if needed
         if (onUserUpdated) {
-          const refetchRes = await fetch(`/api/profileData?username=${finalUsername}`);
-          const fullUser = await refetchRes.json();
-          if (refetchRes.ok) onUserUpdated(fullUser);
+          onUserUpdated(data.user);
         }
 
+        // ✅ Replace current URL with updated username
         if (trimmedNewUsername) {
-          router.push(`/profile?username=${trimmedNewUsername}`);
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("username", trimmedNewUsername);
+          router.replace(`/profile?${params.toString()}`);
         }
 
         onClose();
@@ -58,6 +66,7 @@ function UpdatePage({ onClose, onUserUpdated }) {
         setErrorMessage(data?.error || "Update failed. Please try again.");
       }
     } catch (error) {
+      console.error("Error updating profile:", error);
       setErrorMessage("A network error occurred. Please try again.");
     }
   };
