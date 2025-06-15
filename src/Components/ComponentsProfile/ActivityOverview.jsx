@@ -273,37 +273,62 @@ const categorizedQuizzes = {};
     </ul>
   </>
 
-          ) : (
+          ) :  (
             // ✅ Fallback (quiz list view)
-            <ul className="list-disc list-inside space-y-2 pr-2">
-              {items.map((item, i) => {
-                if (type === "quiz" && item.dateTaken) {
-                  return (
-                    <li key={i} className="text-gray-700 dark:text-gray-300 mb-2">
-                      <span
-                        className="text-blue-700 dark:text-blue-400 underline hover:text-blue-900 cursor-pointer"
-                        onClick={() => {
-                          try {
-                            const quizDate = new Date(item.dateTaken).toISOString();
-                            setActiveQuiz(item);
-                            setActiveQuestionIndex(0);
-                            const params = new URLSearchParams(searchParams.toString());
-                            params.set("quizDate", quizDate);
-                            router.replace("/profile?" + params.toString());
-                          } catch (e) {
-                            console.warn("Invalid date in quiz entry", item.dateTaken);
-                          }
-                        }}
-                      >
-                        📘 View Quiz from {new Date(item.dateTaken).toLocaleString()}
-                      </span>
-                    </li>
-                  );
-                } else {
-                  return null;
+           <>
+    {Object.keys(categorizedQuizzes).length > 1 && (
+      <div className="mb-4 flex flex-wrap gap-2 justify-center">
+        {Object.keys(categorizedQuizzes).map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`text-sm px-3 py-1 rounded-full border ${
+              activeCategory === cat
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-gray-800 text-blue-600 border-blue-600"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+        <button
+          onClick={() => setActiveCategory(null)}
+          className="text-sm px-3 py-1 rounded-full border bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+        >
+          All
+        </button>
+      </div>
+    )}
+
+    <ul className="list-disc list-inside space-y-2 pr-2">
+      {(activeCategory
+        ? categorizedQuizzes[activeCategory] || []
+        : Object.values(categorizedQuizzes).flat()
+      )
+        .sort((a, b) => new Date(b.dateTaken) - new Date(a.dateTaken))
+        .map((item, i) => (
+          <li key={i} className="text-gray-700 dark:text-gray-300 mb-2">
+            <span
+              className="text-blue-700 dark:text-blue-400 underline hover:text-blue-900 cursor-pointer"
+              onClick={() => {
+                try {
+                  const quizDate = new Date(item.dateTaken).toISOString();
+                  setActiveQuiz(item);
+                  setActiveQuestionIndex(0);
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("quizDate", quizDate);
+                  router.replace("/profile?" + params.toString());
+                } catch (e) {
+                  console.warn("Invalid date in quiz entry", item.dateTaken);
                 }
-              })}
-            </ul>
+              }}
+            >
+              📘 View Quiz from {new Date(item.dateTaken).toLocaleString()}
+            </span>
+          </li>
+        ))}
+    </ul>
+  </>
           )
         ) : (
           <p className="text-gray-500 dark:text-gray-400 text-sm">No data available.</p>
