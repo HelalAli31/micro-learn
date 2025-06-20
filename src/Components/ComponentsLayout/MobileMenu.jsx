@@ -41,7 +41,7 @@ export default function MobileMenu({ setIsMenuOpen }) {
                 Admin Panel
               </Link>
             )}
-            <Link href="/search" onClick={() => setIsMenuOpen(false)} className="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            <Link href={`/search?username=${username}`} onClick={() => setIsMenuOpen(false)} className="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               Start Learning
             </Link>
             <Link
