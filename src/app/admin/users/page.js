@@ -1,9 +1,11 @@
+// src/app/admin/users/page.js
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
-import { useAuth } from '../../context/AuthContext'; // Import useAuth
+import React, { useState, useEffect, useMemo, useCallback } from 'react'; // Added useCallback
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
 import UserAdminTable from '../../../Components/ComponentsAdmin/UserAdminTable';
 import MostSearchedPieChart from '../../../Components/ComponentsAdmin/MostSearchedPieChart';
+import CategorySearchCountBarChart from '../../../Components/ComponentsAdmin/CategorySearchCountBarChart';
 import { getUserBadges } from '@/lib/badgeUtils';
 
 // Helper function to find the most frequent string in an array
@@ -26,7 +28,7 @@ const getMostFrequentItem = (arr) => {
 };
 
 const AdminUsersPage = () => {
-  const { user, loading: authLoading } = useAuth(); // Get user and authLoading from context
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [allUsers, setAllUsers] = useState([]);
@@ -38,65 +40,80 @@ const AdminUsersPage = () => {
   const [minAchievementsFilter, setMinAchievementsFilter] = useState('');
   const [mostSearchedFilter, setMostSearchedFilter] = useState('');
 
-  // Authentication check and data fetching
-  useEffect(() => {
-    if (authLoading) return; // Wait for authentication state to load
+  // Function to fetch users from the backend
+  // Wrapped in useCallback to prevent unnecessary re-renders of children
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // --- IMPORTANT: HARDCODED USER ID AND ROLE FOR LOCAL TESTING ---
+      // This MUST be the _id of an actual 'admin' user in your MongoDB database
+      // and needs to match the ID you put in UserAdminTable.jsx for consistency.
+      const adminUserId = '684ebae7af864d08576b707d'; // <<< REPLACE THIS! E.g., '60c72b2f9c9b1f0015f8e21a'
+      const adminUserRole = 'admin';
 
-    // 1. Client-side authentication check
+      if (!adminUserId || adminUserRole !== 'admin') {
+        console.error('Frontend Error: Admin user ID or role not set for headers.');
+        setError('Configuration Error: Admin credentials missing on client-side.');
+        // Consider redirecting even here if essential for admin page access
+        // router.push('/unauthorized');
+        return;
+      }
+
+      const res = await fetch('/api/admin/users', {
+        headers: {
+          'x-user-id': adminUserId,
+          'x-user-role': adminUserRole,
+        },
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        const processedUsers = data.users.map((userItem) => {
+          const { badges } = getUserBadges(userItem.quizHistory);
+          const achievementCount = badges.length;
+          const searchTerms = userItem.searchHistory ? userItem.searchHistory.map(s => s.value) : [];
+          const mostSearched = getMostFrequentItem(searchTerms);
+
+          return {
+            ...userItem,
+            mostSearched,
+            achievementCount,
+          };
+        });
+        setAllUsers(processedUsers);
+        setError(null);
+      } else {
+        setError(data.error || 'Failed to fetch users');
+        if (res.status === 403 || res.status === 401) {
+          router.push('/login'); // Or /unauthorized
+        }
+      }
+    } catch (err) {
+      console.error('❌ Error fetching users for admin:', err);
+      setError('An unexpected error occurred while fetching users.');
+    } finally {
+      setLoading(false);
+    }
+  }, [router]); // fetchUsers depends on router
+
+  // Authentication check and data fetching trigger
+  useEffect(() => {
+    if (authLoading) return; // Wait for authentication state to resolve
+
+    // Client-side check for admin role
     if (!user || user.role !== 'admin') {
-      router.push('/login'); // Redirect to login if not logged in or not an admin
+      router.push('/'); // Redirect if not authenticated or not an admin
       return;
     }
 
-    // 2. Fetch users if authenticated as admin
-    const fetchUsers = async () => {
-      setLoading(true); // Set loading true when starting fetch
-      try {
-        const res = await fetch('/api/admin/users', {
-          headers: {
-            // Ensure user._id and user.role are available before sending
-            'x-user-id': user._id || '', // Send empty string if _id is null/undefined
-            'x-user-role': user.role || '', // Send empty string if role is null/undefined
-          },
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          const processedUsers = data.users.map((userItem) => {
-            const { badges } = getUserBadges(userItem.quizHistory);
-            const achievementCount = badges.length;
-            const mostSearched = getMostFrequentItem(userItem.searchHistory);
-
-            return {
-              ...userItem,
-              mostSearched,
-              achievementCount,
-            };
-          });
-          setAllUsers(processedUsers);
-          setError(null); // Clear any previous errors
-        } else {
-          setError(data.error || 'Failed to fetch users');
-          if (res.status === 403 || res.status === 401) {
-            // If the API explicitly denies access due to auth, redirect to login
-            router.push('/login');
-          }
-        }
-      } catch (err) {
-        console.error('❌ Error fetching users for admin:', err);
-        setError('An unexpected error occurred while fetching users.');
-      } finally {
-        setLoading(false); // Set loading false after fetch attempt
-      }
-    };
-
+    // Fetch users only if authenticated as admin
     fetchUsers();
-  }, [user, authLoading, router]); // Depend on user and authLoading state for re-fetch/redirect
+  }, [user, authLoading, router, fetchUsers]); // Added fetchUsers to dependency array
 
   // Filtered users based on current filter states (memoized for performance)
   const filteredUsers = useMemo(() => {
     return allUsers.filter((userItem) => {
-      // Renamed 'user' to 'userItem' for clarity within filter
       const matchesUsername = usernameFilter
         ? userItem.username.toLowerCase().includes(usernameFilter.toLowerCase())
         : true;
@@ -115,14 +132,16 @@ const AdminUsersPage = () => {
     });
   }, [allUsers, usernameFilter, minAchievementsFilter, mostSearchedFilter]);
 
-  // Data for the pie chart (top 3 most searched items across ALL users)
+  // Data for the pie chart (top 3 most searched *terms* across ALL users)
   const pieChartData = useMemo(() => {
-    const allSearches = allUsers
+    const allSearchValues = allUsers
       .flatMap((userItem) => userItem.searchHistory || [])
-      .filter((item) => item && typeof item === 'string');
+      .map(item => item.value)
+      .filter(item => item && typeof item === 'string');
+
     const searchCounts = {};
-    for (const search of allSearches) {
-      searchCounts[search] = (searchCounts[search] || 0) + 1;
+    for (const searchValue of allSearchValues) {
+      searchCounts[searchValue] = (searchCounts[searchValue] || 0) + 1;
     }
 
     const sortedSearches = Object.entries(searchCounts).sort(
@@ -136,11 +155,33 @@ const AdminUsersPage = () => {
     };
   }, [allUsers]);
 
+  // Data for the bar chart (total searches per category, excluding 'Other')
+  const categorySearchChartData = useMemo(() => {
+    const categoryCounts = {};
+    allUsers.forEach(userItem => {
+      (userItem.searchHistory || []).forEach(searchEntry => {
+        const category = searchEntry.category;
+        if (category && category.toLowerCase() !== 'other') {
+          categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        }
+      });
+    });
+
+    const sortedCategories = Object.entries(categoryCounts).sort(
+      ([, countA], [, countB]) => countB - countA
+    );
+
+    return {
+      labels: sortedCategories.map(([category]) => category),
+      data: sortedCategories.map(([, count]) => count),
+    };
+  }, [allUsers]);
+
   // Display loading/access denied state while authentication is in progress or user is not admin
   if (authLoading || !user || user.role !== 'admin') {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-950">
-        <div className="text-xl font-semibold text-indigo-700 dark:text-indigo-400">
+        <div className="text-xl font-semibold text-indigo-700 dark:text-blue-400">
           {authLoading
             ? 'Loading authentication...'
             : 'Access Denied: You must be an administrator.'}
@@ -153,7 +194,7 @@ const AdminUsersPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-950">
-        <div className="text-xl font-semibold text-indigo-700 dark:text-indigo-400">
+        <div className="text-xl font-semibold text-indigo-700 dark:text-blue-400">
           Loading user data...
         </div>
       </div>
@@ -171,14 +212,14 @@ const AdminUsersPage = () => {
 
   // Render the admin page content if authentication and data fetching are successful
   return (
-    <div className="p-8 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-white">
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-purple-700 dark:text-purple-400">
+    <div className="p-8 bg-gray-50 dark:bg-gradient-to-br dark:from-gray-950 dark:to-blue-950 min-h-screen text-gray-800 dark:text-gray-200">
+      <h1 className="text-4xl font-extrabold mb-8 text-center text-purple-700 dark:text-blue-400">
         Admin User Overview
       </h1>
 
       {/* Filter Section */}
-      <div className="bg-white dark:bg-gray-850 p-6 rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">
+      <div className="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200 dark:bg-gray-900 dark:border-blue-900">
+        <h2 className="text-2xl font-semibold mb-4 text-indigo-700 dark:text-blue-300">
           Filters
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -192,7 +233,7 @@ const AdminUsersPage = () => {
             <input
               type="text"
               id="usernameFilter"
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:border-blue-700 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:text-white dark:placeholder-gray-400"
               placeholder="e.g., JohnDoe"
               value={usernameFilter}
               onChange={(e) => setUsernameFilter(e.target.value)}
@@ -208,7 +249,7 @@ const AdminUsersPage = () => {
             <input
               type="number"
               id="minAchievementsFilter"
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:border-blue-700 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:text-white dark:placeholder-gray-400"
               placeholder="e.g., 1"
               value={minAchievementsFilter}
               onChange={(e) => setMinAchievementsFilter(e.target.value)}
@@ -224,7 +265,7 @@ const AdminUsersPage = () => {
             <input
               type="text"
               id="mostSearchedFilter"
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500 dark:bg-gray-800 dark:border-blue-700 dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:text-white dark:placeholder-gray-400"
               placeholder="e.g., JavaScript"
               value={mostSearchedFilter}
               onChange={(e) => setMostSearchedFilter(e.target.value)}
@@ -234,28 +275,49 @@ const AdminUsersPage = () => {
       </div>
 
       {/* User Table Section */}
-      <div className="bg-white dark:bg-gray-850 p-6 rounded-xl shadow-lg mb-8 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400">
+      <div className="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-200 dark:bg-gray-900 dark:border-blue-900">
+        <h2 className="text-2xl font-semibold mb-4 text-indigo-700 dark:text-blue-300">
           User Data
         </h2>
-        <UserAdminTable users={filteredUsers} />
+        {/* Pass fetchUsers as onUserDeleted prop to trigger refresh */}
+        <UserAdminTable users={filteredUsers} onUserDeleted={fetchUsers} />
       </div>
 
-      {/* Pie Chart Section */}
-      <div className="bg-white dark:bg-gray-850 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
-        <h2 className="text-2xl font-semibold mb-4 text-center text-indigo-700 dark:text-indigo-400">
-          Top 3 Most Searched Terms
-        </h2>
-        {pieChartData.labels.length > 0 ? (
-          <MostSearchedPieChart
-            labels={pieChartData.labels}
-            data={pieChartData.data}
-          />
-        ) : (
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            No search data available for charting.
-          </p>
-        )}
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        {/* Pie Chart Section (Existing) */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 max-w-md mx-auto w-full dark:bg-gray-900 dark:border-blue-900">
+          <h2 className="text-2xl font-semibold mb-4 text-center text-indigo-700 dark:text-blue-300">
+            Top 3 Most Searched Terms
+          </h2>
+          {pieChartData.labels.length > 0 ? (
+            <MostSearchedPieChart
+              labels={pieChartData.labels}
+              data={pieChartData.data}
+            />
+          ) : (
+            <p className="text-center text-gray-500 dark:text-gray-400">
+              No search term data available for charting.
+            </p>
+          )}
+        </div>
+
+        {/* NEW: Bar Chart Section for Categories - Adjusted max-width */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 max-w-full lg:max-w-xl mx-auto w-full dark:bg-gray-900 dark:border-blue-900">
+          <h2 className="text-2xl font-semibold mb-4 text-center text-indigo-700 dark:text-blue-300">
+            Search Count by Category
+          </h2>
+          {categorySearchChartData.labels.length > 0 ? (
+            <CategorySearchCountBarChart
+              labels={categorySearchChartData.labels}
+              data={categorySearchChartData.data}
+            />
+          ) : (
+            <p className="text-center text-gray-500 dark:text-gray-400">
+              No categorized search data available for charting (excluding 'Other').
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

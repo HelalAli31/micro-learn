@@ -68,7 +68,7 @@ ${explanation}`;
     // Step 0: Determine the Category using Gemini
 let category = "Other";
 const categoryPrompt = `Classify the following topic into one of these categories:
-Science, Math, History, Technology, Entertainment, Literature, Health, Education, Business, Sports, Politics, Philosophy, Art & Design, Other.
+Machine Learning,DevOps, Math, History, Artificial Intelligence, Programming, Data Structures & Algorithms, Health, Cloud Computing, Cybersecurity, Sports, Politics, Web Development, Art & Design, Other.
 
 Return ONLY the category name (nothing else).
 
@@ -89,11 +89,23 @@ try {
   category =
     categoryData.candidates?.[0]?.content?.parts?.[0]?.text.trim() || "Other";
 
-  const allowedCategories = [
-    "Science", "Math", "History", "Technology", "Entertainment",
-    "Literature", "Health", "Education", "Business", "Sports",
-    "Politics", "Philosophy", "Art & Design", "Other"
-  ];
+ const allowedCategories = [
+  "Math",
+  "History",
+  "Sports",
+  "Other",
+  "Politics",
+  "Art & Design",
+  "Health",
+  "Machine Learning",
+  "Artificial Intelligence",
+  "Programming",
+  "Data Structures & Algorithms",
+  "Cloud Computing",
+  "Cybersecurity",
+  "DevOps",
+  "Web Development"
+];
   if (!allowedCategories.includes(category)) {
     category = "Other";
   }
