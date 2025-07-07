@@ -11,29 +11,34 @@ function UpdatePage({ onClose, onUserUpdated }) {
 
   const initialUsername = user?.username || searchParams.get("username") || "";
   const [username] = useState(initialUsername);
-  const [newusername, setNewUsername] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newemail, setNewEmail] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [newusername, setNewUsername] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newemail, setNewEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
+  // Handle profile update request
   const handleSaveChanges = async () => {
     const trimmedNewUsername = newusername.trim();
 
+    // Require old password to make any changes
     if (!oldPassword.trim()) {
-      setErrorMessage("To change anything, you must enter your current password.");
+      setErrorMessage(
+        "To change anything, you must enter your current password."
+      );
       return;
     }
 
+    // Prevent submitting same username
     if (trimmedNewUsername && trimmedNewUsername === username) {
       setErrorMessage("You entered the same username.");
       return;
     }
 
     try {
-      const response = await fetch('/api/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username,
           newusername,
@@ -80,7 +85,10 @@ function UpdatePage({ onClose, onUserUpdated }) {
 
         {/* Username */}
         <div className="mb-4">
-          <label htmlFor="usernameInput" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="usernameInput"
+            className="block mb-1 font-medium text-gray-700 dark:text-gray-300"
+          >
             New Username
           </label>
           <input
@@ -89,7 +97,7 @@ function UpdatePage({ onClose, onUserUpdated }) {
             value={newusername}
             onChange={(e) => {
               setNewUsername(e.target.value);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Enter new username"
@@ -98,7 +106,10 @@ function UpdatePage({ onClose, onUserUpdated }) {
 
         {/* Old Password */}
         <div className="mb-4">
-          <label htmlFor="oldPasswordInput" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="oldPasswordInput"
+            className="block mb-1 font-medium text-gray-700 dark:text-gray-300"
+          >
             Old Password
           </label>
           <input
@@ -107,7 +118,7 @@ function UpdatePage({ onClose, onUserUpdated }) {
             value={oldPassword}
             onChange={(e) => {
               setOldPassword(e.target.value);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Enter old password"
@@ -116,7 +127,10 @@ function UpdatePage({ onClose, onUserUpdated }) {
 
         {/* New Password */}
         <div className="mb-4">
-          <label htmlFor="newPasswordInput" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="newPasswordInput"
+            className="block mb-1 font-medium text-gray-700 dark:text-gray-300"
+          >
             New Password
           </label>
           <input
@@ -125,7 +139,7 @@ function UpdatePage({ onClose, onUserUpdated }) {
             value={newPassword}
             onChange={(e) => {
               setNewPassword(e.target.value);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Enter new password"
@@ -134,7 +148,10 @@ function UpdatePage({ onClose, onUserUpdated }) {
 
         {/* New Email */}
         <div className="mb-4">
-          <label htmlFor="emailInput" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+          <label
+            htmlFor="emailInput"
+            className="block mb-1 font-medium text-gray-700 dark:text-gray-300"
+          >
             New Email
           </label>
           <input
@@ -143,7 +160,7 @@ function UpdatePage({ onClose, onUserUpdated }) {
             value={newemail}
             onChange={(e) => {
               setNewEmail(e.target.value);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Enter Gmail address"

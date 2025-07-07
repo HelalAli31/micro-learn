@@ -1,5 +1,17 @@
 import React from "react";
-
+/**
+ * QuizQuestion Component
+ *
+ * Displays a single quiz question with its options.
+ * Shows visual feedback based on whether results are being shown.
+ *
+ * Props:
+ * - quizItem: Object containing question, options, and correct index.
+ * - index: Index of the question in the quiz array.
+ * - selectedAnswer: Currently selected answer index for this question.
+ * - handleOptionChange: Function to update selected answer for this question.
+ * - showResults: Boolean flag indicating whether to show correct/wrong highlights.
+ */
 export default function QuizQuestion({
   quizItem,
   index,
@@ -9,9 +21,11 @@ export default function QuizQuestion({
 }) {
   return (
     <div className="mb-8 p-6 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
+      {/* Question Title */}
       <p className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         {index + 1}. {quizItem.question}
       </p>
+      {/* Options List */}
       <ul className="list-none pl-0">
         {quizItem.options.map((option, optionIndex) => {
           const isCorrect =
@@ -26,9 +40,21 @@ export default function QuizQuestion({
             <li key={optionIndex} className="mb-3">
               <label
                 className={`flex items-center p-3 rounded-md cursor-pointer transition-colors duration-200
-                  ${isCorrect ? "bg-green-100 border border-green-500 dark:bg-green-900 dark:border-green-400" : ""}
-                  ${isWrong ? "bg-red-100 border border-red-500 dark:bg-red-900 dark:border-red-400" : ""}
-                  ${isSelected ? "bg-blue-50 border border-blue-200 dark:bg-blue-900 dark:border-blue-400" : "hover:bg-gray-50 dark:hover:bg-gray-800"}
+                  ${
+                    isCorrect
+                      ? "bg-green-100 border border-green-500 dark:bg-green-900 dark:border-green-400"
+                      : ""
+                  }
+                  ${
+                    isWrong
+                      ? "bg-red-100 border border-red-500 dark:bg-red-900 dark:border-red-400"
+                      : ""
+                  }
+                  ${
+                    isSelected
+                      ? "bg-blue-50 border border-blue-200 dark:bg-blue-900 dark:border-blue-400"
+                      : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                  }
                 `}
               >
                 <input
@@ -48,6 +74,7 @@ export default function QuizQuestion({
           );
         })}
       </ul>
+      {/* Show correct answer if results are displayed */}
       {showResults && selectedAnswer !== -1 && (
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
           <span className="font-semibold">Correct Answer:</span>{" "}

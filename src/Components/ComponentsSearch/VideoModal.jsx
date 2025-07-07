@@ -5,12 +5,17 @@ import Link from "next/link";
 import { X, Clock, Eye, GraduationCap } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
+// VideoModal component displays a YouTube video in a modal overlay.
+// It also saves the watched video to user history via API if a username exists.+
 export default function VideoModal({ selectedVideo, closeVideoModal }) {
+  // Return null if no video is selected
   if (!selectedVideo) return null;
+  // Extract search parameters from URL to get the username
 
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
+  // Save the video to history once modal opens and username is available
   useEffect(() => {
     const saveVideoHistory = async () => {
       if (selectedVideo && username) {
@@ -33,6 +38,7 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
   }, [selectedVideo, username]);
 
   return (
+    // Modal background
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 ">
       <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-xl w-full max-w-4xl shadow-lg">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -45,6 +51,7 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
           </button>
         </div>
 
+        {/* Embedded YouTube video */}
         <div className="aspect-video bg-black">
           <iframe
             src={`https://www.youtube.com/embed/${selectedVideo.id}?autoplay=1`}
@@ -55,6 +62,7 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
           />
         </div>
 
+        {/* Video information and signup prompt */}
         <div className="p-6">
           <p className="mb-6">{selectedVideo.title}</p>
           <div className="flex justify-between items-center">
@@ -68,7 +76,8 @@ export default function VideoModal({ selectedVideo, closeVideoModal }) {
               <Eye className="w-4 h-4 mr-2" />
               <span>{Number(selectedVideo.views).toLocaleString()} views</span>
             </div>
-            
+
+            {/* Signup prompt for guest users */}
             {username === "guest" && (
               <Link
                 href="/signup"

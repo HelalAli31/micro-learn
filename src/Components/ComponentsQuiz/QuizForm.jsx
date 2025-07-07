@@ -2,7 +2,18 @@
 
 import React from "react";
 import QuizQuestion from "./QuizQuestion";
-
+/**
+ * QuizForm component handles the entire quiz display and submission logic.
+ *
+ * Props:
+ * - quiz: Array of quiz questions.
+ * - selectedAnswers: Array of selected answer indices (by user).
+ * - handleOptionChange: Function to update selected answer.
+ * - handleSubmitQuiz: Function to handle form submission.
+ * - showResults: Boolean flag to determine if results should be shown.
+ * - validationMessage: Message shown when quiz validation fails.
+ * - calculateScore: Function to compute final quiz score.
+ */
 export default function QuizForm({
   quiz,
   selectedAnswers,
@@ -17,6 +28,7 @@ export default function QuizForm({
       onSubmit={handleSubmitQuiz}
       className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-8"
     >
+      {/* Render each quiz question */}
       {quiz.map((quizItem, index) => (
         <QuizQuestion
           key={index}
@@ -28,11 +40,13 @@ export default function QuizForm({
         />
       ))}
 
+      {/* Display validation error if any */}
       {validationMessage && (
         <p className="text-red-600 dark:text-red-400 text-center text-lg mb-4">
           {validationMessage}
         </p>
       )}
+      {/* Submit button or Results display */}
 
       {!showResults ? (
         <button

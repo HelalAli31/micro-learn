@@ -1,26 +1,31 @@
 "use client";
 import React from "react";
 import { RefreshCcw } from "lucide-react";
+// CaptchaSection component handles both arithmetic and image-based CAPTCHA
 
 const CaptchaSection = ({
-  captchaType,
-  challenge,
-  answer,
-  setAnswer,
-  imageOptions,
-  correctLabel,
-  selectedIndexes,
-  toggleSelect,
-  generateArithmetic,
-  generateImageCaptcha,
+  captchaType, // "arithmetic" or "image"
+  challenge, // The arithmetic question (e.g., "3 + 7 = ?")
+  answer, // User's input for arithmetic CAPTCHA
+  setAnswer, // Setter for user's answer
+  imageOptions, // Array of image objects for image CAPTCHA
+  correctLabel, // Label that user must match in image CAPTCHA (e.g., "cat")
+  selectedIndexes, // Set of currently selected image indexes
+  toggleSelect, // Function to toggle image selection by index
+  generateArithmetic, // Function to regenerate arithmetic CAPTCHA
+  generateImageCaptcha, // Function to regenerate image CAPTCHA
 }) => {
   return (
     <div>
+      {/* Arithmetic CAPTCHA block */}
+
       {captchaType === "arithmetic" ? (
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Solve the CAPTCHA:
           </label>
+          {/* Display the challenge and refresh button */}
+
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg font-semibold text-gray-800 dark:text-white">
               {challenge}
@@ -41,6 +46,8 @@ const CaptchaSection = ({
           />
         </div>
       ) : (
+        // Image CAPTCHA block
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Select all images containing:{" "}
@@ -53,6 +60,8 @@ const CaptchaSection = ({
           >
             🔄 Refresh
           </button>
+          {/* Grid of selectable image options */}
+
           <div className="grid grid-cols-3 gap-2">
             {imageOptions.map((img, i) => (
               <img

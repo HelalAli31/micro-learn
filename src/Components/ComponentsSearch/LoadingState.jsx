@@ -1,6 +1,11 @@
 import React from "react";
 import { Search } from "lucide-react";
-
+/**
+ * LoadingState Component
+ *
+ * Displays a loading animation while the app is fetching video results.
+ * It is used during the search process to provide visual feedback to the user.
+ */
 export default function LoadingState() {
   return (
     <section className="py-16">

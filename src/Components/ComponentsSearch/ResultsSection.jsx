@@ -8,7 +8,28 @@ import {
   GraduationCap,
   Search,
 } from "lucide-react";
-
+/**
+ * ResultsSection component
+ *
+ * Displays:
+ * - AI explanation of the searched topic (full text or summary)
+ * - Related YouTube videos with thumbnails
+ * - Fallback UI when no videos are found
+ *
+ * Props:
+ * @param {Object} explanation - Full explanation object with { text, query }
+ * @param {string} summary - Short summary of explanation
+ * @param {Array} videos - Array of video objects ({ id, title })
+ * @param {Function} openVideoModal - Handler to open video modal on click
+ * @param {boolean} hasSearched - Flag indicating if a search was performed
+ * @param {boolean} loading - Flag indicating if search is in progress
+ * @param {Function} setQuery - State setter to reset the search query
+ * @param {Function} setHasSearched - Setter to update search state
+ * @param {Function} setVideos - Setter to update videos list
+ * @param {Function} setExplanation - Setter to clear explanation
+ * @param {Function} setQuiz - Setter to clear/reset quiz
+ * @param {Array} quiz - Current quiz data (if any)
+ */
 export default function ResultsSection({
   explanation,
   summary,
@@ -29,12 +50,14 @@ export default function ResultsSection({
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
+          {/* If explanation text exists, show the AI explanation card */}
           {explanation?.text && (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-10">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold dark:text-white">
                   {explanation.query}
                 </h2>
+                {/* Toggle button for showing summary or full explanation */}
                 <div className="flex items-center">
                   {summary && (
                     <button
@@ -48,6 +71,7 @@ export default function ResultsSection({
                         : "Show Full Text"}
                     </button>
                   )}
+                  {/* AI icon and label */}
                   <Lightbulb className="w-5 h-5 mr-2 text-yellow-500" />
                   <span className="font-medium dark:text-white">
                     AI Explanation
@@ -60,6 +84,7 @@ export default function ResultsSection({
             </div>
           )}
 
+          {/* If videos were found, display them */}
           {videos.length > 0 ? (
             <>
               <h3 className="text-xl md:text-2xl font-bold mb-8 flex items-center dark:text-white">
@@ -107,6 +132,7 @@ export default function ResultsSection({
               </div>
             </>
           ) : (
+            /* If no videos found after searching, show fallback message */
             hasSearched &&
             !loading && (
               <div className="text-center py-16">
@@ -119,6 +145,7 @@ export default function ResultsSection({
                 <p className="text-gray-500 dark:text-gray-300 mb-8">
                   Try searching for a different topic
                 </p>
+                {/* Reset search button */}
                 <button
                   onClick={() => {
                     setQuery("");

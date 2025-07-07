@@ -1,5 +1,7 @@
 import React from "react";
 
+// LoadingState component provides a full-page loading spinner.
+// Typically shown while a quiz or other page data is being fetched.+
 export default function LoadingState() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">

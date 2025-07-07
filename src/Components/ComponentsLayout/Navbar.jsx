@@ -1,11 +1,12 @@
 // src/app/Components/ComponentsLayout/Navbar.jsx
-'use client';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useAuth } from '../../app/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import ThemeToggle from './ThemeToggle';
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { useAuth } from "../../app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
+// Navbar is the fixed top navigation bar with responsive layout and user-specific links
 export default function Navbar({ toggleMenu, isMenuOpen }) {
   // Destructure 'user' along with isLoggedIn, logout, username
   const { isLoggedIn, logout, username, user } = useAuth();
@@ -13,7 +14,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    router.push("/");
   };
 
   return (
@@ -40,7 +41,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
         className="menu-button md:hidden text-white dark:text-gray-100 focus:outline-none text-2xl"
         onClick={toggleMenu}
       >
-        {isMenuOpen ? '✖' : '☰'}
+        {isMenuOpen ? "✖" : "☰"}
       </button>
 
       {/* Nav links + buttons */}
@@ -71,7 +72,7 @@ export default function Navbar({ toggleMenu, isMenuOpen }) {
           {isLoggedIn ? (
             <>
               {/* Admin Panel Button - Only visible to admins */}
-              {user && user.role === 'admin' && (
+              {user && user.role === "admin" && (
                 <Link
                   href="/admin/users"
                   className="px-4 py-2 border border-blue-500 rounded-lg text-blue-300 font-semibold text-sm hover:bg-blue-500 hover:text-white transition-colors duration-200"

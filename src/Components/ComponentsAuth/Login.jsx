@@ -1,30 +1,36 @@
 // src/Components/ComponentsAuth/Login.jsx
-'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../app/context/AuthContext'; // Ensure this path is correct
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../app/context/AuthContext"; // Ensure this path is correct
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+// LoginComponent handles user login and routing based on role
 
 const LoginComponent = () => {
-  const [form, setForm] = useState({ username: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  // State to manage form input values
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
+  const [error, setError] = useState(""); // Error message to show on failed login
   const router = useRouter();
-  const { login } = useAuth(); // Assuming useAuth provides a login function
+  const { login } = useAuth(); // Get login method from AuthContext
+
+  // Update form state when input fields change
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  // Handle form submission
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     form.username = form.username.toLowerCase();
 
     try {
-      // Added try-catch for better error handling
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // Send login credentials to backend API
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
@@ -36,17 +42,17 @@ const LoginComponent = () => {
         // So, data.user contains the full user object including 'role'
         login(data.user); // <--- CHANGE: Pass the full user object
 
-        if (data.user && data.user.role === 'admin') {
-          router.push('/admin/users'); // Redirect admin to admin page
+        if (data.user && data.user.role === "admin") {
+          router.push("/admin/users"); // Redirect admin to admin page
         } else {
           router.push(`/profile?username=${data.user.username}`); // Redirect regular user to their profile
         }
       } else {
-        setError(data.error || 'Invalid credentials');
+        setError(data.error || "Invalid credentials");
       }
     } catch (err) {
-      console.error('Login API call failed:', err);
-      setError('An unexpected error occurred during login.');
+      console.error("Login API call failed:", err);
+      setError("An unexpected error occurred during login.");
     }
   };
 
@@ -94,7 +100,7 @@ const LoginComponent = () => {
                 <Lock className="w-4 h-4" />
               </span>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
@@ -145,7 +151,7 @@ const LoginComponent = () => {
         )}
 
         <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-6">
-          Don’t have an account?{' '}
+          Don’t have an account?{" "}
           <a
             href="/signup"
             className="text-purple-600 font-medium hover:underline"

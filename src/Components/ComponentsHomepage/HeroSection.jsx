@@ -1,9 +1,11 @@
 // ✅ HeroSection.jsx
 import Image from "next/image";
 
+// HeroSection is the main banner section that introduces the platform
 export default function HeroSection() {
   return (
     <section className="hero-section dark:bg-gray-900 text-[var(--color-text)]">
+      {/* Left side: text content (title + description) */}
       <div className="hero-content">
         <h1 className="hero-title">
           Learn Faster with <span className="text-accent">Micro-Learning</span>
@@ -14,6 +16,7 @@ export default function HeroSection() {
           concepts quickly and efficiently—anytime, anywhere.
         </p>
       </div>
+      {/* Right side: illustration/image */}
       <div className="mt-8 md:mt-0">
         <Image
           src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80"

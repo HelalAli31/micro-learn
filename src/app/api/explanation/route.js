@@ -1,9 +1,11 @@
 // api/explanation/route.js
 import { URL } from "url";
+// Handles GET requests to generate explanation, summary, quiz, and category using Gemini API
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
+  // Return empty response if no query is provided
 
   if (!query) {
     return new Response(
@@ -14,6 +16,7 @@ export async function GET(request) {
       }
     );
   }
+  // Gemini API configuration
 
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -66,8 +69,8 @@ ${explanation}`;
     }
 
     // Step 0: Determine the Category using Gemini
-let category = "Other";
-const categoryPrompt = `Classify the following topic into one of these categories:
+    let category = "Other";
+    const categoryPrompt = `Classify the following topic into one of these categories:
 Machine Learning,DevOps, Math, History, Artificial Intelligence, Programming, Data Structures & Algorithms, Health, Cloud Computing, Cybersecurity, Sports, Politics, Web Development, Art & Design, Other.
 
 Return ONLY the category name (nothing else).
@@ -75,45 +78,46 @@ Return ONLY the category name (nothing else).
 Query:
 ${query}`;
 
-try {
-  const categoryResponse = await fetch(geminiApiUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: categoryPrompt }] }],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 30 },
-    }),
-  });
+    try {
+      const categoryResponse = await fetch(geminiApiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: categoryPrompt }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 30 },
+        }),
+      });
 
-  const categoryData = await categoryResponse.json();
-  category =
-    categoryData.candidates?.[0]?.content?.parts?.[0]?.text.trim() || "Other";
+      const categoryData = await categoryResponse.json();
+      category =
+        categoryData.candidates?.[0]?.content?.parts?.[0]?.text.trim() ||
+        "Other";
+      // Validate category against allowed list
 
- const allowedCategories = [
-  "Math",
-  "History",
-  "Sports",
-  "Other",
-  "Politics",
-  "Art & Design",
-  "Health",
-  "Machine Learning",
-  "Artificial Intelligence",
-  "Programming",
-  "Data Structures & Algorithms",
-  "Cloud Computing",
-  "Cybersecurity",
-  "DevOps",
-  "Web Development"
-];
-  if (!allowedCategories.includes(category)) {
-    category = "Other";
-  }
-} catch (err) {
-  console.error("Gemini category classification error:", err);
-  category = "Other";
-}
-
+      const allowedCategories = [
+        "Math",
+        "History",
+        "Sports",
+        "Other",
+        "Politics",
+        "Art & Design",
+        "Health",
+        "Machine Learning",
+        "Artificial Intelligence",
+        "Programming",
+        "Data Structures & Algorithms",
+        "Cloud Computing",
+        "Cybersecurity",
+        "DevOps",
+        "Web Development",
+      ];
+      if (!allowedCategories.includes(category)) {
+        category = "Other";
+      }
+    } catch (err) {
+      console.error("Gemini category classification error:", err);
+      category = "Other";
+    }
 
     // --- Step 3: Generate Four Quiz Questions based on the Explanation ---
     let quiz = [];
@@ -179,6 +183,8 @@ try {
 
       try {
         const quizText = quizData.candidates?.[0]?.content?.parts?.[0]?.text;
+        // Try to extract and parse JSON quiz data
+
         if (quizText) {
           const jsonMatch = quizText.match(/```json\n([\s\S]*?)\n```/);
           if (jsonMatch && jsonMatch[1]) {
@@ -202,10 +208,12 @@ try {
     }
 
     // --- Send the Explanation, Summary, and Quiz to the Frontend ---
-    return new Response(JSON.stringify({ explanation, summary, quiz, category }), {
-
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ explanation, summary, quiz, category }),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Gemini API request failed:", error);
     return new Response(

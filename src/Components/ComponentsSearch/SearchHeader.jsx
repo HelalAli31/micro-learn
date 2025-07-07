@@ -1,16 +1,18 @@
 import React from "react";
 import { Search } from "lucide-react";
 
+// Component for displaying the search bar and header
 export default function SearchHeader({
-  query,
-  setQuery,
-  handleSubmit,
-  username,
+  query, // Current search input value
+  setQuery, // Function to update the search input
+  handleSubmit, // Function to handle search submission
+  username, // (Optional) Username for personalization (not used here)
 }) {
   return (
     <section className="py-12 bg-gradient-to-r from-white to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
+          {/* Search header with icon and title */}
           <div className="flex items-center justify-center mb-6">
             <Search className="w-10 h-10 text-[#202774] dark:text-orange-300 mr-4" />
             <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-white">
@@ -18,6 +20,7 @@ export default function SearchHeader({
             </h1>
           </div>
 
+          {/* Search input and submit button */}
           <form onSubmit={handleSubmit} className="relative mb-6">
             <input
               type="text"

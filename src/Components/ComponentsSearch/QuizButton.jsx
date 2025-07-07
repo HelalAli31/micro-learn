@@ -1,5 +1,13 @@
 import React from "react";
-
+/**
+ * QuizButton Component
+ *
+ * Renders a styled button that, when clicked, triggers the `handleMakeQuiz` callback.
+ * Typically used to navigate the user to the quiz creation or quiz view section.
+ *
+ * Props:
+ * - handleMakeQuiz (function): Function to be executed when the button is clicked.
+ */
 export default function QuizButton({ handleMakeQuiz }) {
   return (
     <div className="text-center mt-12 mb-10 ">

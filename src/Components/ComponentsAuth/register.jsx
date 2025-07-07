@@ -40,9 +40,12 @@ const imageData = [
   },
 ];
 
+// Simple shuffle utility to randomize image options
+
 function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);
 }
+// SignupComponent handles user registration with CAPTCHA verification
 
 const SignupComponent = () => {
   const [form, setForm] = useState({
@@ -51,13 +54,15 @@ const SignupComponent = () => {
     confirm: "",
     email: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
-  const [captchaType, setCaptchaType] = useState("arithmetic");
+  const [showPassword, setShowPassword] = useState(false); // Password visibility toggle
+  const [message, setMessage] = useState(""); // Success or error message
+  const [captchaType, setCaptchaType] = useState("arithmetic"); // "arithmetic" or "image"
 
+  // Arithmetic CAPTCHA state
   const [challenge, setChallenge] = useState("");
   const [answer, setAnswer] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState(null);
+  // Image CAPTCHA state
 
   const [imageOptions, setImageOptions] = useState([]);
   const [correctLabel, setCorrectLabel] = useState("");
@@ -66,18 +71,21 @@ const SignupComponent = () => {
 
   const [error, setError] = useState("");
   const [failedAttempts, setFailedAttempts] = useState(0);
-  const maxAttempts = 3;
+  const maxAttempts = 3; // Max allowed incorrect CAPTCHA attempts
+  // Handles switching CAPTCHA type and resets state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handles switching CAPTCHA type and resets state
   const handleCaptchaChange = (e) => {
     setCaptchaType(e.target.value);
     setFailedAttempts(0);
     setError("");
   };
 
+  // Generates a simple math CAPTCHA (e.g., 3 + 7)
   const generateArithmetic = () => {
     const a = Math.floor(Math.random() * 10) + 1;
     const b = Math.floor(Math.random() * 10) + 1;
@@ -85,6 +93,7 @@ const SignupComponent = () => {
     setCorrectAnswer(a + b);
     setAnswer("");
   };
+  // Generates image CAPTCHA by selecting a target label
 
   const generateImageCaptcha = () => {
     const shuffled = shuffle([...imageData]);
@@ -101,6 +110,7 @@ const SignupComponent = () => {
     setCorrectIndexes(newCorrectIndexes);
     setSelectedIndexes(new Set());
   };
+  // Toggles image selection (add/remove)
 
   const toggleSelect = (idx) => {
     const newSet = new Set(selectedIndexes);
@@ -116,40 +126,42 @@ const SignupComponent = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setMessage("");
+    e.preventDefault();
+    setError("");
+    setMessage("");
 
-  if (!validateCaptcha()) {
-    setFailedAttempts((prev) => prev + 1);
-    setError("❌ CAPTCHA failed. Try again.");
-    if (failedAttempts + 1 >= maxAttempts)
-      setError("❌ Too many incorrect CAPTCHA attempts. Try later.");
-    return;
-  }
+    // CAPTCHA check before proceeding
+    if (!validateCaptcha()) {
+      setFailedAttempts((prev) => prev + 1);
+      setError("❌ CAPTCHA failed. Try again.");
+      if (failedAttempts + 1 >= maxAttempts)
+        setError("❌ Too many incorrect CAPTCHA attempts. Try later.");
+      return;
+    }
 
-  form.username = form.username.toLowerCase();
+    form.username = form.username.toLowerCase();
 
-  const res = await fetch("/api/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: form.username,
-      password: form.password,
-      email: form.email,
-    }),
-  });
+    // Submit form to register API
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: form.username,
+        password: form.password,
+        email: form.email,
+      }),
+    });
 
-  const data = await res.json();
-  if (res.ok) {
-    setMessage("✅ Signup successful!");
-    setForm({ username: "", password: "", confirm: "", email: "" });
-  } else {
-    setMessage(`❌ ${data.error}`);
-  }
-};
+    const data = await res.json();
+    if (res.ok) {
+      setMessage("✅ Signup successful!");
+      setForm({ username: "", password: "", confirm: "", email: "" });
+    } else {
+      setMessage(`❌ ${data.error}`);
+    }
+  };
 
-
+  // Trigger CAPTCHA generation on load or change
   useEffect(() => {
     captchaType === "arithmetic"
       ? generateArithmetic()
